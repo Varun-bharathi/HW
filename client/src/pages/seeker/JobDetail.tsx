@@ -129,7 +129,7 @@ export function JobDetail() {
             disabled={applying}
             className="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
           >
-            {applying ? 'Applying…' : 'Apply'}
+            {applying ? 'Starting Test…' : 'Screening Test'}
           </button>
         )}
         <Link

@@ -162,8 +162,8 @@ applicationsRouter.post(
       try {
         const f = file as unknown as { mimetype: string; filename: string }
         if (f.mimetype === 'application/pdf') {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          const pdfParse = (await import('pdf-parse')).default
+          const pdfParseModule = await import('pdf-parse')
+          const pdfParse = (pdfParseModule as any).default ?? pdfParseModule
           const dataBuffer = fs.readFileSync(path.join(uploadsDir, file.filename))
           const pdfData = await pdfParse(dataBuffer)
           textContent = pdfData.text
@@ -315,7 +315,7 @@ applicationsRouter.get('/:id', async (req: AuthRequest, res) => {
 })
 
 function getRandomQuestions(): QuestionTemplate[] {
-  const categories = ['Data Structures', 'DBMS', 'Software Testing', 'Debugging', 'Leetcode'] as const
+  const categories = ['Data Structures', 'DBMS', 'Software Testing', 'Debugging', 'Cloud Computing', 'Leetcode'] as const
   const selected: QuestionTemplate[] = []
 
   categories.forEach((cat) => {
@@ -378,8 +378,11 @@ applicationsRouter.post(
           id: `q-${idx}`, // Generate temp ID if not present
           ...q,
           solution: undefined, // Hide solution
-          correctIndex: undefined // Hide correct index
-        }))
+          correctIndex: undefined, // Hide correct index
+          options: q.options?.map((text, i) => ({ id: i.toString(), text })),
+        })),
+        duration_minutes: 45,
+        cutoff: 70,
       })
 
     } catch (e) {
@@ -390,7 +393,7 @@ applicationsRouter.post(
 )
 
 // Helper to prepare source code with driver for testing
-function prepareSource(lang: string, userCode: string, input: string, funcName: string): string {
+export function prepareSource(lang: string, userCode: string, input: string, funcName: string): string {
   if (lang === 'javascript') {
     return `${userCode}
 try {
@@ -416,7 +419,7 @@ except Exception as e:
 }
 
 // Function name mapping per question content (heuristic)
-function getFuncName(content: string): string {
+export function getFuncName(content: string): string {
   if (content.includes('Two Sum')) return 'twoSum'
   if (content.includes('Palindrome')) return 'isPalindrome'
   if (content.includes('Reverse String')) return 'reverseString'

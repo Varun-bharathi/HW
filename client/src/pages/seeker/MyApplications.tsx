@@ -89,9 +89,9 @@ export function MyApplications() {
                   <p className="text-sm text-slate-400">
                     {app.job?.location ?? '—'} · {app.job?.employment_type ?? '—'}
                   </p>
-                  {app.screening_score != null && (
+                  {app.resume_jd_match != null && (
                     <p className="mt-1 text-xs text-slate-500">
-                      Screening: {app.screening_score}% · Match: {app.resume_jd_match ?? '—'}%
+                      Match: {app.resume_jd_match}%
                     </p>
                   )}
                 </div>
@@ -109,12 +109,12 @@ export function MyApplications() {
                   )}
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-medium ${app.status === 'accepted'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : app.status === 'rejected'
-                          ? 'bg-red-500/20 text-red-400'
-                          : app.status === 'shortlisted'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-slate-600/50 text-slate-400'
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : app.status === 'rejected'
+                        ? 'bg-red-500/20 text-red-400'
+                        : app.status === 'shortlisted'
+                          ? 'bg-amber-500/20 text-amber-400'
+                          : 'bg-slate-600/50 text-slate-400'
                       }`}
                   >
                     {statusLabels[app.status]}

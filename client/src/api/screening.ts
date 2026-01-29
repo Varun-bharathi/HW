@@ -10,6 +10,7 @@ export interface ScreeningConfig {
     content: string
     options?: Array<{ id: string; text: string; correct: boolean }>
     testCases?: Array<{ input: string; expected: string }>
+    examples?: Array<{ input: string; output: string; explanation?: string }>
     max_score: number
     order_index: number
   }>
