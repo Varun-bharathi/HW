@@ -53,8 +53,10 @@ export function JobApplicants() {
       }
     },
   })
+
+
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({
-    key: 'match',
+    key: 'score',
     dir: 'desc',
   })
   const [selected, setSelected] = useState<ApplicationListItem | null>(null)
@@ -70,6 +72,7 @@ export function JobApplicants() {
         case 'match':
           cmp = (a.resume_jd_match ?? 0) - (b.resume_jd_match ?? 0)
           break
+
         case 'score':
           cmp = (a.screening_score ?? 0) - (b.screening_score ?? 0)
           break
@@ -122,7 +125,7 @@ export function JobApplicants() {
           </Link>
           <h1 className="text-2xl font-bold text-white">Applicants · {job.title}</h1>
           <p className="mt-1 text-slate-400">
-            Resume-JD match, test scores, status. View profile, send assessment, accept/reject.
+            Test scores, status. View profile, send assessment, accept/reject.
           </p>
         </div>
       </div>
@@ -146,13 +149,14 @@ export function JobApplicants() {
                     ))}
                 </span>
               </th>
+
               <th
                 className="text-left py-3 px-4 sortable-th"
                 onClick={() => toggleSort('match')}
                 data-sort-active={sort.key === 'match' ? true : undefined}
               >
                 <span className="flex items-center gap-1">
-                  Resume–JD match
+                  Resume Match
                   {sort.key === 'match' &&
                     (sort.dir === 'asc' ? (
                       <ChevronUp className="w-4 h-4" />
@@ -209,11 +213,13 @@ export function JobApplicants() {
                     {app.job_seeker?.full_name ?? '—'}
                   </button>
                 </td>
+
                 <td className="py-3 px-4">
                   <span className="font-mono text-brand-400">
                     {app.resume_jd_match != null ? `${app.resume_jd_match}%` : '—'}
                   </span>
                 </td>
+
                 <td className="py-3 px-4">
                   <span className="font-mono text-emerald-400">
                     {app.screening_score != null ? `${app.screening_score}%` : '—'}
@@ -221,15 +227,14 @@ export function JobApplicants() {
                 </td>
                 <td className="py-3 px-4">
                   <span
-                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                      app.status === 'accepted'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : app.status === 'rejected'
-                          ? 'bg-red-500/20 text-red-400'
-                          : app.status === 'shortlisted'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-slate-600/50 text-slate-400'
-                    }`}
+                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${app.status === 'accepted'
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : app.status === 'rejected'
+                        ? 'bg-red-500/20 text-red-400'
+                        : app.status === 'shortlisted'
+                          ? 'bg-amber-500/20 text-amber-400'
+                          : 'bg-slate-600/50 text-slate-400'
+                      }`}
                   >
                     {statusLabels[app.status]}
                   </span>
@@ -249,6 +254,7 @@ export function JobApplicants() {
                     >
                       <Send className="w-4 h-4" />
                     </button>
+
                     {app.status !== 'accepted' && app.status !== 'rejected' && (
                       <>
                         <button

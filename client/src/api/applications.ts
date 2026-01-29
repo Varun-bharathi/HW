@@ -28,4 +28,5 @@ export const applicationsApi = {
   uploadResume: (applicationId: string, file: File) => uploadResumeRequest(applicationId, file),
   accept: (id: string) => api.patch<ApplicationListItem>(`/applications/${id}/accept`),
   reject: (id: string) => api.patch<ApplicationListItem>(`/applications/${id}/reject`),
+  startScreening: (id: string) => api.post<{ attemptId: string; questions: unknown[] }>(`/applications/${id}/screening/start`),
 }

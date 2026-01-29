@@ -5,7 +5,8 @@ interface CodeEditorProps {
   value: string
   onChange: (value: string) => void
   language?: string
-  height?: number
+  onLanguageChange?: (lang: string) => void
+  height?: number | string
   readOnly?: boolean
 }
 
@@ -13,6 +14,7 @@ export function CodeEditor({
   value,
   onChange,
   language = 'javascript',
+  onLanguageChange,
   height = 240,
   readOnly = false,
 }: CodeEditorProps) {
@@ -22,7 +24,24 @@ export function CodeEditor({
   )
 
   return (
-    <div className="assessment-container rounded-lg overflow-hidden">
+    <div className="assessment-container rounded-lg overflow-hidden border border-slate-700 h-full flex flex-col">
+      <div className="bg-slate-800 p-2 flex items-center justify-between border-b border-slate-700">
+        <span className="text-xs text-slate-400 font-medium ml-2">Code Editor</span>
+        {!readOnly && (
+          <select
+            value={language}
+            onChange={(e) => onLanguageChange?.(e.target.value)}
+            className="bg-slate-900 text-slate-300 text-xs rounded border border-slate-700 px-2 py-1 outline-none focus:border-brand-500"
+          >
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="javascript">JavaScript</option>
+            <option value="csharp">C#</option>
+            <option value="cpp">C++</option>
+            <option value="c">C</option>
+          </select>
+        )}
+      </div>
       <Editor
         height={height}
         language={language}

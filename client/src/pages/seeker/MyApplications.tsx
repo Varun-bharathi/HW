@@ -35,7 +35,7 @@ export function MyApplications() {
   const fileRef = useRef<HTMLInputElement | null>(null)
 
   function handleUploadClick(app: ApplicationListItem) {
-    if (app.status !== 'passed_screening') return
+    if (app.status !== 'passed_screening' && app.status !== 'accepted') return
     setPendingUploadId(app.id)
     fileRef.current?.click()
   }
@@ -96,7 +96,7 @@ export function MyApplications() {
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  {app.status === 'passed_screening' && (
+                  {(app.status === 'passed_screening' || app.status === 'accepted') && (
                     <button
                       type="button"
                       onClick={() => handleUploadClick(app)}
@@ -108,15 +108,14 @@ export function MyApplications() {
                     </button>
                   )}
                   <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                      app.status === 'accepted'
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${app.status === 'accepted'
                         ? 'bg-emerald-500/20 text-emerald-400'
                         : app.status === 'rejected'
                           ? 'bg-red-500/20 text-red-400'
                           : app.status === 'shortlisted'
                             ? 'bg-amber-500/20 text-amber-400'
                             : 'bg-slate-600/50 text-slate-400'
-                    }`}
+                      }`}
                   >
                     {statusLabels[app.status]}
                   </span>

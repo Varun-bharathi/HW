@@ -109,9 +109,20 @@ export function JobDetail() {
       )}
       <div className="flex gap-3">
         {hasApplied ? (
-          <span className="inline-flex items-center px-4 py-2.5 rounded-lg bg-slate-700 text-slate-400">
-            Application submitted
-          </span>
+          <div className="flex flex-col gap-2">
+            <span className="inline-flex items-center px-4 py-2.5 rounded-lg bg-slate-700 text-slate-400">
+              Application submitted
+            </span>
+            <button
+              onClick={() => {
+                const app = myApps.find((a) => a.job_id === id)
+                if (app) navigate(`/assessment/screening/${app.id}`)
+              }}
+              className="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-colors"
+            >
+              Start Screening Test
+            </button>
+          </div>
         ) : (
           <button
             onClick={handleApply}

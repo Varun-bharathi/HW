@@ -9,6 +9,7 @@ export interface ScreeningConfig {
     type: string
     content: string
     options?: Array<{ id: string; text: string; correct: boolean }>
+    testCases?: Array<{ input: string; expected: string }>
     max_score: number
     order_index: number
   }>
@@ -22,7 +23,7 @@ export interface SubmitScreeningResponse {
 
 export const screeningApi = {
   get: (applicationId: string) =>
-    api.get<ScreeningConfig>(`/screening/${applicationId}`),
+    api.post<ScreeningConfig>(`/applications/${applicationId}/screening/start`),
   start: (applicationId: string) =>
     api.post<{ attempt_id: string; started_at: string }>(`/screening/${applicationId}/start`),
   pause: (applicationId: string, body: { answers?: Record<string, string>; time_spent_sec?: number }) =>
@@ -31,4 +32,6 @@ export const screeningApi = {
     api.post(`/screening/${applicationId}/resume`),
   submit: (applicationId: string, body: { answers: Record<string, string>; time_spent_sec?: number }) =>
     api.post<SubmitScreeningResponse>(`/screening/${applicationId}/submit`, body),
+  runCode: (applicationId: string, payload: { questionId: string; code: string; language: string }) =>
+    api.post<{ results: { input: string; expected: string; output: string; passed: boolean }[] }>(`/applications/${applicationId}/screening/run-code`, payload),
 }
