@@ -68,6 +68,8 @@ export interface ApplicationListItem {
   resume_jd_match?: number | null
   resume_parsed?: ResumeParsed | null
   screening_score?: number | null
+  aptitude_score?: number | null
+  coding_score?: number | null
   screening_at?: string | null
   resume_submitted_at?: string | null
   created_at: string

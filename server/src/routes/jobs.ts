@@ -104,23 +104,24 @@ jobsRouter.get('/:id/applications', requireRole('recruiter'), async (req: AuthRe
         resume_jd_match: a.resumeJdMatch,
         resume_parsed: a.resumeParsed ? (JSON.parse(a.resumeParsed) as unknown) : undefined,
         screening_score: a.screeningScore,
+        aptitude_score: a.aptitudeScore,
         screening_at: a.screeningAt?.toISOString(),
         resume_submitted_at: a.resumeSubmittedAt?.toISOString(),
         created_at: a.createdAt.toISOString(),
         job: a.job
           ? {
-              id: a.job.id,
-              title: a.job.title,
-              location: a.job.location,
-              employment_type: a.job.employmentType,
-              required_skills: parseJsonArray(a.job.requiredSkills),
-            }
+            id: a.job.id,
+            title: a.job.title,
+            location: a.job.location,
+            employment_type: a.job.employmentType,
+            required_skills: parseJsonArray(a.job.requiredSkills),
+          }
           : undefined,
         job_seeker: a.jobSeeker
           ? {
-              full_name: a.jobSeeker.jobSeekerProfile?.fullName ?? a.jobSeeker.email,
-              email: a.jobSeeker.email,
-            }
+            full_name: a.jobSeeker.jobSeekerProfile?.fullName ?? a.jobSeeker.email,
+            email: a.jobSeeker.email,
+          }
           : undefined,
       }))
     )
@@ -167,18 +168,18 @@ jobsRouter.post('/:id/apply', async (req: AuthRequest, res) => {
       application_id: app.id,
       screening: prelim
         ? {
-            assessment_id: prelim.id,
-            duration_minutes: config.duration_minutes ?? 45,
-            cutoff: config.cutoff ?? 70,
-            questions: (prelim.questions ?? []).map((q) => ({
-              id: q.id,
-              type: q.type,
-              content: q.content,
-              options: q.options ? (JSON.parse(q.options) as unknown) : undefined,
-              max_score: q.maxScore,
-              order_index: q.orderIndex,
-            })),
-          }
+          assessment_id: prelim.id,
+          duration_minutes: config.duration_minutes ?? 45,
+          cutoff: config.cutoff ?? 70,
+          questions: (prelim.questions ?? []).map((q) => ({
+            id: q.id,
+            type: q.type,
+            content: q.content,
+            options: q.options ? (JSON.parse(q.options) as unknown) : undefined,
+            max_score: q.maxScore,
+            order_index: q.orderIndex,
+          })),
+        }
         : null,
     })
   } catch (e) {
@@ -442,11 +443,11 @@ function toJobJson(job: { id: string; recruiterId: string; title: string; descri
     updated_at: job.updatedAt.toISOString(),
     screening: prelim
       ? {
-          assessment_id: prelim.id,
-          duration_minutes: config.duration_minutes ?? 45,
-          cutoff: config.cutoff ?? 70,
-          questions,
-        }
+        assessment_id: prelim.id,
+        duration_minutes: config.duration_minutes ?? 45,
+        cutoff: config.cutoff ?? 70,
+        questions,
+      }
       : undefined,
   }
 }

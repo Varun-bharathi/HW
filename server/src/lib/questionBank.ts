@@ -1,5 +1,5 @@
 export interface QuestionTemplate {
-    category: 'Data Structures' | 'DBMS' | 'Software Testing' | 'Debugging' | 'Cloud Computing' | 'Leetcode'
+    category: 'Data Structures' | 'DBMS' | 'Software Testing' | 'Debugging' | 'Cloud Computing' | 'Leetcode' | 'Verbal' | 'Quantitative' | 'Logical Reasoning'
     type: 'mcq' | 'coding'
     content: string
     options?: string[]

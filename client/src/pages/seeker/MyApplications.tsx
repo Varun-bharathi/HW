@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileCheck, ExternalLink, Upload } from 'lucide-react'
+import { FileCheck, ExternalLink, Upload, Code } from 'lucide-react'
 import { applicationsApi } from '@/api/applications'
 import type { ApplicationListItem } from '@/api/jobs'
 
@@ -11,8 +11,10 @@ const statusLabels: Record<string, string> = {
   resume_submitted: 'Resume submitted',
   under_review: 'Under review',
   shortlisted: 'Shortlisted',
-  assessment_sent: 'Assessment sent',
+  assessment_sent: 'Aptitude Test Pending',
   assessment_completed: 'Assessment done',
+  coding_sent: 'Coding Test Pending',
+  coding_completed: 'Coding done',
   interview_scheduled: 'Interview',
   accepted: 'Accepted',
   rejected: 'Rejected',
@@ -106,6 +108,24 @@ export function MyApplications() {
                       <Upload className="w-4 h-4" />
                       {uploadingId === app.id ? 'Uploading…' : 'Upload resume'}
                     </button>
+                  )}
+                  {app.status === 'assessment_sent' && (
+                    <Link
+                      to={`/assessment/aptitude/${app.id}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 text-sm font-medium"
+                    >
+                      <FileCheck className="w-4 h-4" />
+                      Take Aptitude Test
+                    </Link>
+                  )}
+                  {app.status === 'coding_sent' && (
+                    <Link
+                      to={`/assessment/coding/${app.id}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 text-sm font-medium"
+                    >
+                      <Code className="w-4 h-4" />
+                      Take Coding Test
+                    </Link>
                   )}
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-medium ${app.status === 'accepted'

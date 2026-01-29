@@ -45,9 +45,8 @@ export function JobSeekerLayout() {
               <Link
                 key={to}
                 to={to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  active ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                }`}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
               >
                 <Icon className="w-5 h-5 shrink-0" />
                 {label}
@@ -66,7 +65,7 @@ export function JobSeekerLayout() {
         </div>
       </aside>
       <main className="flex-1 overflow-auto">
-        <div className="max-w-7xl mx-auto p-6 lg:p-8">
+        <div className={`${location.pathname.includes('/assessment/coding/') ? '' : 'max-w-7xl mx-auto p-6 lg:p-8'}`}>
           <Outlet />
         </div>
       </main>

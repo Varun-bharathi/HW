@@ -104,6 +104,8 @@ model Application {
   resumeParsed       String?   @map("resume_parsed") // JSON
   resumeJdMatch      Float?    @map("resume_jd_match")
   screeningScore     Float?    @map("screening_score")
+  aptitudeScore      Float?    @map("aptitude_score")
+  codingScore        Float?    @map("coding_score")
   screeningAt        DateTime? @map("screening_at")
   resumeSubmittedAt  DateTime? @map("resume_submitted_at")
   createdAt          DateTime  @default(now()) @map("created_at")
@@ -118,6 +120,7 @@ model Application {
 model ScreeningAttempt {
   id             String    @id @default(cuid())
   applicationId  String    @map("application_id")
+  type           String    @default("screening") // screening | aptitude
   startedAt      DateTime  @default(now()) @map("started_at")
   pausedAt       DateTime? @map("paused_at")
   submittedAt    DateTime? @map("submitted_at")
