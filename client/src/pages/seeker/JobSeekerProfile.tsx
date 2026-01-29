@@ -1,23 +1,73 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import { User, Save, Upload } from 'lucide-react'
+import { getMe, patchMe } from '@/api/me'
 
 export function JobSeekerProfile() {
   const { user } = useAuthStore()
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({
-    full_name: 'Job Seeker',
-    skills: 'React, TypeScript, Node.js',
-    experience: 'Frontend Engineer @ Tech Co (2 years)',
-    location: 'Remote',
-    portfolio_urls: 'https://github.com/me, https://linkedin.com/in/me',
-    email: user?.email ?? '',
+    full_name: '',
+    skills: '',
+    experience: '',
+    location: '',
+    portfolio_urls: '',
+    email: '',
   })
 
-  function handleSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    let cancelled = false
+    getMe()
+      .then((res) => {
+        if (cancelled) return
+        const p = res.user.jobSeekerProfile
+        const skills = p?.skills && p.skills.length ? p.skills.join(', ') : ''
+        const urls = p?.portfolio_urls && p.portfolio_urls.length ? p.portfolio_urls.join(', ') : ''
+        setForm({
+          full_name: p?.full_name ?? '',
+          skills,
+          experience: p?.experience ?? '',
+          location: p?.location ?? '',
+          portfolio_urls: urls,
+          email: res.user.email ?? user?.email ?? '',
+        })
+      })
+      .catch((e) => {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load profile')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [user?.email])
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
-    setTimeout(() => setSaving(false), 800)
+    setError(null)
+    try {
+      await patchMe({
+        full_name: form.full_name,
+        skills: form.skills,
+        experience: form.experience,
+        location: form.location,
+        portfolio_urls: form.portfolio_urls,
+      })
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to save')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl">
+        <p className="text-slate-400">Loading profile…</p>
+      </div>
+    )
   }
 
   return (
@@ -28,6 +78,11 @@ export function JobSeekerProfile() {
           Resume upload, skills, experience, location, portfolio links
         </p>
       </div>
+      {error && (
+        <div className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-2 text-red-300 text-sm">
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 space-y-4">
           <div className="flex items-center gap-4 mb-4">
@@ -49,7 +104,7 @@ export function JobSeekerProfile() {
                 <Upload className="w-4 h-4" />
                 Upload PDF/DOC
               </button>
-              <span className="text-sm text-slate-500">AI-parsed after upload</span>
+              <span className="text-sm text-slate-500">AI-parsed after upload (coming soon)</span>
             </div>
           </div>
           <div>
@@ -91,7 +146,7 @@ export function JobSeekerProfile() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">
-              Portfolio links (one per line or comma-separated)
+              Portfolio links (comma-separated)
             </label>
             <input
               type="text"

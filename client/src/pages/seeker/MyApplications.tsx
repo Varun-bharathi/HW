@@ -1,9 +1,11 @@
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { FileCheck, ExternalLink } from 'lucide-react'
-import { mockApplications, mockJobs } from '@/api/mockData'
-import type { ApplicationStatus } from '@/types'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { FileCheck, ExternalLink, Upload } from 'lucide-react'
+import { applicationsApi } from '@/api/applications'
+import type { ApplicationListItem } from '@/api/jobs'
 
-const statusLabels: Record<ApplicationStatus, string> = {
+const statusLabels: Record<string, string> = {
   screening: 'Screening',
   passed_screening: 'Passed screening',
   resume_submitted: 'Resume submitted',
@@ -17,10 +19,38 @@ const statusLabels: Record<ApplicationStatus, string> = {
 }
 
 export function MyApplications() {
-  const applications = mockApplications.map((a) => ({
-    ...a,
-    job: mockJobs.find((j) => j.id === a.job_id),
-  }))
+  const qc = useQueryClient()
+  const { data: applications = [], isLoading } = useQuery({
+    queryKey: ['applications'],
+    queryFn: () => applicationsApi.list(),
+  })
+  const uploadMu = useMutation({
+    mutationFn: ({ appId, file }: { appId: string; file: File }) =>
+      applicationsApi.uploadResume(appId, file),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['applications'] })
+    },
+  })
+  const [pendingUploadId, setPendingUploadId] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement | null>(null)
+
+  function handleUploadClick(app: ApplicationListItem) {
+    if (app.status !== 'passed_screening') return
+    setPendingUploadId(app.id)
+    fileRef.current?.click()
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !pendingUploadId) return
+    uploadMu.mutate(
+      { appId: pendingUploadId, file },
+      { onSettled: () => setPendingUploadId(null) }
+    )
+    e.target.value = ''
+  }
+
+  const uploadingId = uploadMu.isPending ? uploadMu.variables?.appId ?? null : null
 
   return (
     <div className="space-y-6">
@@ -29,9 +59,18 @@ export function MyApplications() {
         <p className="mt-1 text-slate-400">Track progress and interview invitations</p>
       </div>
 
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        className="hidden"
+        onChange={handleFileChange}
+      />
       <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
         <div className="divide-y divide-slate-800">
-          {applications.length === 0 ? (
+          {isLoading ? (
+            <div className="py-12 text-center text-slate-400">Loading…</div>
+          ) : applications.length === 0 ? (
             <div className="py-12 text-center text-slate-400">
               <FileCheck className="w-12 h-12 mx-auto mb-3 text-slate-600" />
               <p>No applications yet.</p>
@@ -57,6 +96,17 @@ export function MyApplications() {
                   )}
                 </div>
                 <div className="flex items-center gap-3">
+                  {app.status === 'passed_screening' && (
+                    <button
+                      type="button"
+                      onClick={() => handleUploadClick(app)}
+                      disabled={uploadMu.isPending}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 text-sm font-medium disabled:opacity-50"
+                    >
+                      <Upload className="w-4 h-4" />
+                      {uploadingId === app.id ? 'Uploading…' : 'Upload resume'}
+                    </button>
+                  )}
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                       app.status === 'accepted'

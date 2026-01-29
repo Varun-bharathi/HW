@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Sparkles, FileText, Upload } from 'lucide-react'
+import { jobsApi } from '@/api/jobs'
+import { aiApi } from '@/api/ai'
 
 const employmentTypes = ['full_time', 'part_time', 'contract', 'internship']
 const experienceLevels = ['entry', 'mid', 'senior', 'lead']
@@ -18,6 +20,7 @@ export function JobPostingCreate() {
     location: '',
     employment_type: 'full_time',
     cutoff_score: 70,
+    publish_immediately: false,
   })
 
   const skillsList = form.skills
@@ -29,26 +32,40 @@ export function JobPostingCreate() {
     if (!form.title.trim()) return
     setLoading(true)
     try {
-      await new Promise((r) => setTimeout(r, 1200))
-      setForm((p) => ({
-        ...p,
-        description:
-          `We are looking for a ${form.title} to join our team. You will work on building scalable applications, collaborate with cross-functional teams, and contribute to technical decisions.\n\nResponsibilities:\n- Design and implement features\n- Write clean, maintainable code\n- Participate in code reviews\n\nRequirements:\n- Experience with ${skillsList.slice(0, 2).join(' and ') || 'relevant technologies'}\n- Strong problem-solving skills\n- Good communication`,
-      }))
+      const { description } = await aiApi.generateDescription({
+        title: form.title.trim(),
+        skills: skillsList.length ? skillsList : undefined,
+      })
+      setForm((p) => ({ ...p, description }))
+    } catch (e) {
+      console.error(e)
     } finally {
       setLoading(false)
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const job = {
-      ...form,
-      required_skills: skillsList,
-      status: 'draft' as const,
+    setLoading(true)
+    try {
+      const created = await jobsApi.create({
+        title: form.title,
+        description: form.description,
+        required_skills: skillsList,
+        experience_level: form.experience_level,
+        location: form.location || undefined,
+        employment_type: form.employment_type,
+        cutoff_score: form.cutoff_score,
+      })
+      if (form.publish_immediately) {
+        await jobsApi.publish(created.id)
+      }
+      navigate('/recruiter/dashboard')
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
-    console.log('Create job', job)
-    navigate('/recruiter/dashboard')
   }
 
   return (
@@ -219,12 +236,31 @@ export function JobPostingCreate() {
           </p>
         </div>
 
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.publish_immediately}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, publish_immediately: e.target.checked }))
+            }
+            className="rounded border-slate-600 bg-slate-900 text-brand-500 focus:ring-brand-500"
+          />
+          <span className="text-sm text-slate-300">
+            Publish immediately — visible to job seekers right away
+          </span>
+        </label>
+
         <div className="flex gap-3 pt-4">
           <button
             type="submit"
-            className="px-6 py-3 rounded-lg bg-brand-500 text-white font-medium hover:bg-brand-600 transition-colors"
+            disabled={loading}
+            className="px-6 py-3 rounded-lg bg-brand-500 text-white font-medium hover:bg-brand-600 disabled:opacity-50 transition-colors"
           >
-            Save as draft
+            {loading
+              ? 'Saving…'
+              : form.publish_immediately
+                ? 'Create & publish'
+                : 'Save as draft'}
           </button>
           <Link
             to="/recruiter/dashboard"

@@ -1,17 +1,45 @@
+import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { MapPin, Briefcase, ArrowLeft } from 'lucide-react'
-import { mockJobs, mockApplications } from '@/api/mockData'
+import { jobsApi } from '@/api/jobs'
+import { applicationsApi } from '@/api/applications'
 
 export function JobDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const job = mockJobs.find((j) => j.id === id)
-  const hasApplied = mockApplications.some((a) => a.job_id === id)
+  const [applying, setApplying] = useState(false)
+  const [applyError, setApplyError] = useState('')
 
-  if (!job) {
+  const { data: job, isLoading } = useQuery({
+    queryKey: ['job', id],
+    queryFn: () => jobsApi.get(id!),
+    enabled: !!id,
+  })
+  const { data: myApps = [] } = useQuery({
+    queryKey: ['applications'],
+    queryFn: () => applicationsApi.list(),
+  })
+  const hasApplied = id ? myApps.some((a) => a.job_id === id) : false
+
+  async function handleApply() {
+    if (!id) return
+    setApplyError('')
+    setApplying(true)
+    try {
+      const res = await jobsApi.apply(id)
+      navigate(`/assessment/screening/${res.application_id}`, { replace: true })
+    } catch (e) {
+      setApplyError(e instanceof Error ? e.message : 'Apply failed')
+    } finally {
+      setApplying(false)
+    }
+  }
+
+  if (!id) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">Job not found.</p>
+        <p className="text-slate-400">Invalid job.</p>
         <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
           Back to jobs
         </Link>
@@ -19,11 +47,18 @@ export function JobDetail() {
     )
   }
 
-  function handleApply() {
-    // In real app: start application → redirect to preliminary test
-    // For demo, we use a mock screening application ID
-    navigate(`/assessment/screening/a1`)
+  if (isLoading || !job) {
+    return (
+      <div className="max-w-3xl mx-auto py-12 text-center text-slate-400">
+        {isLoading ? 'Loading…' : 'Job not found.'}
+        <Link to="/seeker/jobs" className="mt-2 block text-emerald-400 hover:underline">
+          Back to jobs
+        </Link>
+      </div>
+    )
   }
+
+  const skills = Array.isArray(job.required_skills) ? job.required_skills : []
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -43,7 +78,7 @@ export function JobDetail() {
             </span>
             <span className="flex items-center gap-1">
               <Briefcase className="w-4 h-4" />
-              {job.employment_type.replace('_', ' ')} · {job.experience_level}
+              {(job.employment_type ?? 'full_time').replace(/_/g, ' ')} · {job.experience_level ?? '—'}
             </span>
           </p>
         </div>
@@ -55,7 +90,7 @@ export function JobDetail() {
         <div className="mt-4">
           <h3 className="text-sm font-semibold text-slate-300 mb-2">Required skills</h3>
           <div className="flex flex-wrap gap-2">
-            {job.required_skills.map((s) => (
+            {skills.map((s) => (
               <span
                 key={s}
                 className="px-2.5 py-1 rounded-lg bg-slate-700/50 text-slate-300 text-sm"
@@ -67,6 +102,11 @@ export function JobDetail() {
         </div>
       </div>
 
+      {applyError && (
+        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          {applyError}
+        </div>
+      )}
       <div className="flex gap-3">
         {hasApplied ? (
           <span className="inline-flex items-center px-4 py-2.5 rounded-lg bg-slate-700 text-slate-400">
@@ -75,9 +115,10 @@ export function JobDetail() {
         ) : (
           <button
             onClick={handleApply}
-            className="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-colors"
+            disabled={applying}
+            className="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
           >
-            Apply
+            {applying ? 'Applying…' : 'Apply'}
           </button>
         )}
         <Link

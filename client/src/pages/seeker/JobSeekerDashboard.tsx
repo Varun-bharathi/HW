@@ -1,10 +1,20 @@
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { FileCheck, Search, Bell, ArrowRight } from 'lucide-react'
-import { mockApplications, mockJobs } from '@/api/mockData'
+import { jobsApi } from '@/api/jobs'
+import { applicationsApi } from '@/api/applications'
 
 export function JobSeekerDashboard() {
-  const myApps = mockApplications.slice(0, 3)
-  const suggested = mockJobs.filter((j) => j.status === 'live').slice(0, 2)
+  const { data: myApps = [] } = useQuery({
+    queryKey: ['applications'],
+    queryFn: () => applicationsApi.list(),
+  })
+  const { data: jobs = [] } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => jobsApi.list(),
+  })
+  const suggested = jobs.filter((j) => j.status === 'live').slice(0, 2)
+  const recentApps = myApps.slice(0, 3)
 
   return (
     <div className="space-y-8">
@@ -39,7 +49,7 @@ export function JobSeekerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-400">Find jobs</p>
-              <p className="mt-1 text-2xl font-bold text-white">{suggested.length}+</p>
+              <p className="mt-1 text-2xl font-bold text-white">{jobs.filter((j) => j.status === 'live').length}+</p>
             </div>
             <Search className="w-10 h-10 text-brand-500/50 group-hover:text-brand-400" />
           </div>
@@ -73,12 +83,12 @@ export function JobSeekerDashboard() {
           </Link>
         </div>
         <div className="divide-y divide-slate-800">
-          {myApps.length === 0 ? (
+          {recentApps.length === 0 ? (
             <div className="py-12 text-center text-slate-400">
               No applications yet. <Link to="/seeker/jobs" className="text-emerald-400 hover:underline">Find jobs</Link> to apply.
             </div>
           ) : (
-            myApps.map((app) => (
+            recentApps.map((app) => (
               <div
                 key={app.id}
                 className="p-4 flex items-center justify-between hover:bg-slate-800/30"

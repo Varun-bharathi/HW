@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { mockLogin, mockRegisterJobSeeker } from '@/api/mockAuth'
+import { login, registerJobSeeker } from '@/api/auth'
 
 const formClass =
   'w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent'
@@ -21,7 +21,7 @@ export function JobSeekerLogin() {
     setError('')
     setLoading(true)
     try {
-      const { token, user } = await mockLogin({ email, password, role: 'job_seeker' })
+      const { token, user } = await login({ email, password, role: 'job_seeker' })
       setAuth(token, user)
       navigate(from, { replace: true })
     } catch (err) {
@@ -103,7 +103,7 @@ export function JobSeekerRegister() {
     setError('')
     setLoading(true)
     try {
-      const { token, user } = await mockRegisterJobSeeker({ email, password, full_name: fullName })
+      const { token, user } = await registerJobSeeker({ email, password, full_name: fullName })
       setAuth(token, user)
       navigate('/seeker/dashboard', { replace: true })
     } catch (err) {

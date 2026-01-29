@@ -1,26 +1,24 @@
 import { X } from 'lucide-react'
-import type { Application } from '@/types'
+import type { ApplicationListItem } from '@/api/jobs'
 
 interface CandidateDetailModalProps {
-  application: Application
+  application: ApplicationListItem
   onClose: () => void
 }
 
-const mockParsed = {
-  name: 'Alex Chen',
-  email: 'alex@example.com',
-  skills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
-  experience: [
-    { company: 'Tech Co', role: 'Frontend Engineer', years: 3 },
-    { company: 'Startup XYZ', role: 'Full-stack Developer', years: 2 },
-  ],
-  education: 'B.S. Computer Science',
+function skillGaps(jobSkills: string[], resumeSkills: string[]): string[] {
+  const r = resumeSkills.map((s) => s.toLowerCase())
+  return jobSkills.filter((js) => !r.some((rs) => rs.includes(js.toLowerCase()) || js.toLowerCase().includes(rs)))
 }
-const jobSkills = ['React', 'TypeScript', 'CSS', 'REST APIs']
-const skillGaps = jobSkills.filter((s) => !mockParsed.skills.some((x) => x.toLowerCase().includes(s.toLowerCase())))
 
 export function CandidateDetailModal({ application, onClose }: CandidateDetailModalProps) {
-  const name = application.job_seeker?.full_name ?? mockParsed.name
+  const name = application.job_seeker?.full_name ?? '—'
+  const parsed = application.resume_parsed
+  const skills = parsed?.skills ?? []
+  const experience = parsed?.experience
+  const summary = parsed?.summary
+  const jobSkills = application.job?.required_skills ?? []
+  const gaps = skillGaps(jobSkills, skills)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -41,7 +39,7 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
                 Resume–JD match
               </p>
               <p className="mt-1 text-2xl font-bold text-brand-400">
-                {application.resume_jd_match ?? '—'}%
+                {application.resume_jd_match != null ? `${application.resume_jd_match}%` : '—'}
               </p>
             </div>
             <div>
@@ -49,7 +47,7 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
                 Screening score
               </p>
               <p className="mt-1 text-2xl font-bold text-emerald-400">
-                {application.screening_score ?? '—'}%
+                {application.screening_score != null ? `${application.screening_score}%` : '—'}
               </p>
             </div>
           </div>
@@ -57,17 +55,20 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
           <div>
             <h3 className="text-sm font-semibold text-slate-300 mb-2">Parsed resume data</h3>
             <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-4 font-mono text-sm text-slate-300 space-y-1">
-              <p>Skills: {mockParsed.skills.join(', ')}</p>
-              <p>Experience: {mockParsed.experience.map((e) => `${e.role} @ ${e.company}`).join('; ')}</p>
-              <p>Education: {mockParsed.education}</p>
+              {skills.length > 0 && <p>Skills: {skills.join(', ')}</p>}
+              {experience && <p>Experience: {experience}</p>}
+              {summary && <p>Summary: {summary}</p>}
+              {!skills.length && !experience && !summary && (
+                <p className="text-slate-500">No parsed data yet.</p>
+              )}
             </div>
           </div>
 
-          {skillGaps.length > 0 && (
+          {gaps.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-amber-400 mb-2">Skill gaps vs JD</h3>
               <p className="text-sm text-slate-400">
-                Missing or weaker: {skillGaps.join(', ')}
+                Missing or weaker: {gaps.join(', ')}
               </p>
             </div>
           )}
@@ -75,8 +76,8 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
           <div>
             <h3 className="text-sm font-semibold text-slate-300 mb-2">Match breakdown</h3>
             <p className="text-sm text-slate-400">
-              Semantic similarity between resume and job description; skills overlap; experience
-              level alignment. Full breakdown available via API.
+              Resume–JD match is based on overlap between job required skills and parsed resume
+              skills. Skill gaps list required skills not clearly present on the resume.
             </p>
           </div>
         </div>

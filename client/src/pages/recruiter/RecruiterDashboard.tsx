@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   BarChart3,
   Users,
   Briefcase,
   TrendingUp,
   ArrowRight,
+  Send,
 } from 'lucide-react'
 import {
   BarChart,
@@ -15,18 +17,30 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts'
-import { mockJobs, mockApplications } from '@/api/mockData'
+import { jobsApi } from '@/api/jobs'
 
 const funnelData = [
-  { stage: 'Applied', count: mockApplications.length + 4, fill: '#0ea5e9' },
-  { stage: 'Screened', count: mockApplications.length + 2, fill: '#38bdf8' },
-  { stage: 'Shortlisted', count: 1, fill: '#7dd3fc' },
+  { stage: 'Applied', count: 6, fill: '#0ea5e9' },
+  { stage: 'Screened', count: 4, fill: '#38bdf8' },
+  { stage: 'Shortlisted', count: 2, fill: '#7dd3fc' },
   { stage: 'Interview', count: 1, fill: '#bae6fd' },
 ]
 
 export function RecruiterDashboard() {
-  const liveJobs = mockJobs.filter((j) => j.status === 'live')
-  const totalApplicants = mockApplications.length + 6
+  const qc = useQueryClient()
+  const { data: jobs = [], isLoading } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => jobsApi.list(),
+  })
+  const publishMu = useMutation({
+    mutationFn: (jobId: string) => jobsApi.publish(jobId),
+    onSuccess: (_, jobId) => {
+      qc.invalidateQueries({ queryKey: ['jobs'] })
+      qc.invalidateQueries({ queryKey: ['job', jobId] })
+    },
+  })
+  const liveJobs = jobs.filter((j) => j.status === 'live')
+  const totalApplicants = jobs.length * 3
 
   return (
     <div className="space-y-8">
@@ -155,8 +169,14 @@ export function RecruiterDashboard() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
+        <p className="px-4 py-2 text-sm text-slate-500 border-b border-slate-800">
+          Draft jobs are not visible to job seekers. Click <strong>Publish</strong> to go live.
+        </p>
         <div className="divide-y divide-slate-800">
-          {mockJobs.map((job) => (
+          {isLoading ? (
+            <div className="p-8 text-center text-slate-400">Loading…</div>
+          ) : (
+            jobs.map((job) => (
             <div
               key={job.id}
               className="p-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
@@ -167,7 +187,7 @@ export function RecruiterDashboard() {
                   {job.location} · {job.employment_type}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span
                   className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                     job.status === 'live'
@@ -177,6 +197,23 @@ export function RecruiterDashboard() {
                 >
                   {job.status}
                 </span>
+                {job.status === 'draft' && (
+                  <button
+                    type="button"
+                    onClick={() => publishMu.mutate(job.id)}
+                    disabled={publishMu.isPending && publishMu.variables === job.id}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
+                  >
+                    <Send className="w-4 h-4" />
+                    {publishMu.isPending && publishMu.variables === job.id ? 'Publishing…' : 'Publish'}
+                  </button>
+                )}
+                <Link
+                  to={`/recruiter/jobs/${job.id}/edit`}
+                  className="text-sm font-medium text-slate-400 hover:text-white"
+                >
+                  Edit
+                </Link>
                 <Link
                   to={`/recruiter/jobs/${job.id}/applicants`}
                   className="text-sm font-medium text-brand-400 hover:text-brand-300"
@@ -185,7 +222,7 @@ export function RecruiterDashboard() {
                 </Link>
               </div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>

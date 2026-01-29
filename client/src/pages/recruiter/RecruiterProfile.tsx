@@ -1,20 +1,59 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import { User, Save } from 'lucide-react'
+import { getMe, patchMe } from '@/api/me'
 
 export function RecruiterProfile() {
   const { user } = useAuthStore()
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({
-    full_name: 'Recruiter User',
-    company: 'Acme Inc.',
-    email: user?.email ?? '',
+    full_name: '',
+    company: '',
+    email: '',
   })
 
-  function handleSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    let cancelled = false
+    getMe()
+      .then((res) => {
+        if (cancelled) return
+        const p = res.user.recruiterProfile
+        setForm({
+          full_name: p?.full_name ?? '',
+          company: p?.company ?? '',
+          email: res.user.email ?? user?.email ?? '',
+        })
+      })
+      .catch((e) => {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load profile')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [user?.email])
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
-    setTimeout(() => setSaving(false), 800)
+    setError(null)
+    try {
+      await patchMe({ full_name: form.full_name, company: form.company || null })
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to save')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl">
+        <p className="text-slate-400">Loading profile…</p>
+      </div>
+    )
   }
 
   return (
@@ -23,6 +62,11 @@ export function RecruiterProfile() {
         <h1 className="text-2xl font-bold text-white">Profile</h1>
         <p className="mt-1 text-slate-400">Editable recruiter information</p>
       </div>
+      {error && (
+        <div className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-2 text-red-300 text-sm">
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 space-y-4">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 rounded-full bg-brand-500/20 flex items-center justify-center">

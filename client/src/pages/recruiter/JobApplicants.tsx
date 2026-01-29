@@ -1,14 +1,15 @@
 import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronUp, ChevronDown, User, Send, Check, X } from 'lucide-react'
-import { mockApplications, mockJobs } from '@/api/mockData'
+import { jobsApi, type ApplicationListItem } from '@/api/jobs'
+import { applicationsApi } from '@/api/applications'
 import { CandidateDetailModal } from '@/components/recruiter/CandidateDetailModal'
-import type { Application, ApplicationStatus } from '@/types'
 
 type SortKey = 'name' | 'match' | 'score' | 'status'
 type SortDir = 'asc' | 'desc'
 
-const statusLabels: Record<ApplicationStatus, string> = {
+const statusLabels: Record<string, string> = {
   screening: 'Screening',
   passed_screening: 'Passed screening',
   resume_submitted: 'Resume submitted',
@@ -23,16 +24,40 @@ const statusLabels: Record<ApplicationStatus, string> = {
 
 export function JobApplicants() {
   const { id } = useParams<{ id: string }>()
-  const job = mockJobs.find((j) => j.id === id)
-  const applications = useMemo(
-    () => mockApplications.filter((a) => a.job_id === id),
-    [id]
-  )
+  const qc = useQueryClient()
+  const { data: job, isLoading: jobLoading } = useQuery({
+    queryKey: ['job', id],
+    queryFn: () => jobsApi.get(id!),
+    enabled: !!id,
+  })
+  const { data: applications = [] } = useQuery({
+    queryKey: ['jobs', id, 'applications'],
+    queryFn: () => jobsApi.applications(id!),
+    enabled: !!id,
+  })
+  const acceptMu = useMutation({
+    mutationFn: (appId: string) => applicationsApi.accept(appId),
+    onSuccess: () => {
+      if (id) {
+        qc.invalidateQueries({ queryKey: ['jobs', id, 'applications'] })
+        qc.invalidateQueries({ queryKey: ['job', id] })
+      }
+    },
+  })
+  const rejectMu = useMutation({
+    mutationFn: (appId: string) => applicationsApi.reject(appId),
+    onSuccess: () => {
+      if (id) {
+        qc.invalidateQueries({ queryKey: ['jobs', id, 'applications'] })
+        qc.invalidateQueries({ queryKey: ['job', id] })
+      }
+    },
+  })
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({
     key: 'match',
     dir: 'desc',
   })
-  const [selected, setSelected] = useState<Application | null>(null)
+  const [selected, setSelected] = useState<ApplicationListItem | null>(null)
 
   const sorted = useMemo(() => {
     const list = [...applications]
@@ -64,10 +89,20 @@ export function JobApplicants() {
     }))
   }
 
-  if (!job) {
+  if (!id) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">Job not found.</p>
+        <p className="text-slate-400">Invalid job.</p>
+        <Link to="/recruiter/dashboard" className="mt-2 inline-block text-brand-400 hover:underline">
+          Back to dashboard
+        </Link>
+      </div>
+    )
+  }
+  if (jobLoading || !job) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-slate-400">{jobLoading ? 'Loading…' : 'Job not found.'}</p>
         <Link to="/recruiter/dashboard" className="mt-2 inline-block text-brand-400 hover:underline">
           Back to dashboard
         </Link>
@@ -214,18 +249,26 @@ export function JobApplicants() {
                     >
                       <Send className="w-4 h-4" />
                     </button>
-                    <button
-                      className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-emerald-400"
-                      title="Accept"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                    <button
-                      className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-red-400"
-                      title="Reject"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    {app.status !== 'accepted' && app.status !== 'rejected' && (
+                      <>
+                        <button
+                          onClick={() => acceptMu.mutate(app.id)}
+                          disabled={acceptMu.isPending || rejectMu.isPending}
+                          className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-emerald-400 disabled:opacity-50"
+                          title="Accept"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => rejectMu.mutate(app.id)}
+                          disabled={acceptMu.isPending || rejectMu.isPending}
+                          className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-red-400 disabled:opacity-50"
+                          title="Reject"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </td>
               </tr>

@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         String   // 'recruiter' | 'job_seeker'
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  recruiterProfile  RecruiterProfile?
+  jobSeekerProfile  JobSeekerProfile?
+  jobs              Job[]             @relation("JobRecruiter")
+  applications      Application[]     @relation("ApplicationSeeker")
+}
+
+model RecruiterProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  fullName  String   @map("full_name")
+  company   String?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model JobSeekerProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique @map("user_id")
+  fullName      String   @map("full_name")
+  resumeUrl     String?  @map("resume_url")
+  resumeParsed  String?  @map("resume_parsed") // JSON
+  skills        String?  // JSON array
+  experience    String?  // JSON
+  location      String?
+  portfolioUrls String?  @map("portfolio_urls") // JSON array
+  avatarUrl     String?  @map("avatar_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id               String   @id @default(cuid())
+  recruiterId      String   @map("recruiter_id")
+  title            String
+  description      String
+  requiredSkills   String?  @map("required_skills") // JSON array
+  experienceLevel  String?  @map("experience_level")
+  location         String?
+  employmentType   String?  @map("employment_type")
+  status           String   @default("draft") // draft | live | closed
+  cutoffScore      Int?     @map("cutoff_score")
+  screeningConfig  String?  @map("screening_config") // JSON
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  recruiter    User          @relation("JobRecruiter", fields: [recruiterId], references: [id], onDelete: Cascade)
+  applications Application[]
+  assessments  Assessment[]
+}
+
+model Assessment {
+  id        String   @id @default(cuid())
+  jobId     String?  @map("job_id")
+  type      String   // preliminary | mcq | coding
+  title     String?
+  config    String?  // JSON
+  createdAt DateTime @default(now()) @map("created_at")
+
+  job       Job?                @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  questions Question[]
+}
+
+model Question {
+  id           String  @id @default(cuid())
+  assessmentId String  @map("assessment_id")
+  type         String  // mcq | coding
+  content      String
+  options      String? // JSON for MCQ
+  solution     String?
+  maxScore     Int     @default(1) @map("max_score")
+  orderIndex   Int     @default(0) @map("order_index")
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+}
+
+model Application {
+  id                 String    @id @default(cuid())
+  jobId              String    @map("job_id")
+  jobSeekerId        String    @map("job_seeker_id")
+  status             String    @default("screening")
+  resumeUrl          String?   @map("resume_url")
+  resumeParsed       String?   @map("resume_parsed") // JSON
+  resumeJdMatch      Float?    @map("resume_jd_match")
+  screeningScore     Float?    @map("screening_score")
+  screeningAt        DateTime? @map("screening_at")
+  resumeSubmittedAt  DateTime? @map("resume_submitted_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  job        Job                 @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobSeeker  User                @relation("ApplicationSeeker", fields: [jobSeekerId], references: [id], onDelete: Cascade)
+  screening  ScreeningAttempt[]
+  @@unique([jobId, jobSeekerId])
+}
+
+model ScreeningAttempt {
+  id             String    @id @default(cuid())
+  applicationId  String    @map("application_id")
+  startedAt      DateTime  @default(now()) @map("started_at")
+  pausedAt       DateTime? @map("paused_at")
+  submittedAt    DateTime? @map("submitted_at")
+  score          Float?
+  answers        String?   // JSON
+  timeSpentSec   Int?      @map("time_spent_sec")
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}

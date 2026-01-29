@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { Search, MapPin, Briefcase } from 'lucide-react'
-import { mockJobs } from '@/api/mockData'
+import { jobsApi } from '@/api/jobs'
 
 export function JobDiscovery() {
   const [q, setQ] = useState('')
@@ -9,14 +10,18 @@ export function JobDiscovery() {
   const [employmentType, setEmploymentType] = useState('')
   const [experience, setExperience] = useState('')
 
+  const { data: jobs = [], isLoading } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => jobsApi.list(),
+  })
   const filtered = useMemo(() => {
-    let list = mockJobs.filter((j) => j.status === 'live')
+    let list = jobs.filter((j) => j.status === 'live')
     if (q.trim()) {
       const lower = q.toLowerCase()
       list = list.filter(
         (j) =>
           j.title.toLowerCase().includes(lower) ||
-          j.required_skills.some((s) => s.toLowerCase().includes(lower))
+          (Array.isArray(j.required_skills) && j.required_skills.some((s: string) => s.toLowerCase().includes(lower)))
       )
     }
     if (location.trim()) {
@@ -24,13 +29,13 @@ export function JobDiscovery() {
       list = list.filter((j) => (j.location ?? '').toLowerCase().includes(lower))
     }
     if (employmentType) {
-      list = list.filter((j) => j.employment_type === employmentType)
+      list = list.filter((j) => (j.employment_type ?? '') === employmentType)
     }
     if (experience) {
-      list = list.filter((j) => j.experience_level === experience)
+      list = list.filter((j) => (j.experience_level ?? '') === experience)
     }
     return list
-  }, [q, location, employmentType, experience])
+  }, [jobs, q, location, employmentType, experience])
 
   return (
     <div className="space-y-6">
@@ -87,7 +92,10 @@ export function JobDiscovery() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((job) => (
+        {isLoading ? (
+          <div className="col-span-full py-12 text-center text-slate-400">Loading…</div>
+        ) : (
+          filtered.map((job) => (
           <Link
             key={job.id}
             to={`/seeker/jobs/${job.id}`}
@@ -102,7 +110,7 @@ export function JobDiscovery() {
                 </p>
                 <p className="mt-1 text-sm text-slate-400 flex items-center gap-1">
                   <Briefcase className="w-4 h-4" />
-                  {job.employment_type.replace('_', ' ')} · {job.experience_level}
+                  {(job.employment_type ?? 'full_time').replace(/_/g, ' ')} · {job.experience_level ?? '—'}
                 </p>
               </div>
             </div>
@@ -118,9 +126,9 @@ export function JobDiscovery() {
             </div>
             <p className="mt-3 text-sm text-slate-400 line-clamp-2">{job.description}</p>
           </Link>
-        ))}
+        )))}
       </div>
-      {filtered.length === 0 && (
+      {!isLoading && filtered.length === 0 && (
         <div className="py-12 text-center text-slate-400">
           No jobs match your filters. Try broadening your search.
         </div>

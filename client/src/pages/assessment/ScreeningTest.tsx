@@ -1,12 +1,50 @@
-import { useState, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { CountdownTimer } from '@/components/assessment/CountdownTimer'
 import { CodeEditor } from '@/components/assessment/CodeEditor'
-import { mockAssessment } from '@/api/mockData'
-import type { McqOption } from '@/types'
+import { screeningApi } from '@/api/screening'
 
-const DURATION_MIN = 45
+interface McqOption {
+  id: string
+  text: string
+  correct: boolean
+}
+
+function McqOptions({
+  options,
+  selected,
+  onSelect,
+}: {
+  options: McqOption[]
+  selected?: string
+  onSelect: (id: string) => void
+}) {
+  return (
+    <div className="space-y-2">
+      {options.map((opt) => (
+        <label
+          key={opt.id}
+          className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+            selected === opt.id
+              ? 'border-brand-500 bg-brand-500/10'
+              : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+          }`}
+        >
+          <input
+            type="radio"
+            name="mcq"
+            value={opt.id}
+            checked={selected === opt.id}
+            onChange={() => onSelect(opt.id)}
+            className="sr-only"
+          />
+          <span className="text-slate-200">{opt.text}</span>
+        </label>
+      ))}
+    </div>
+  )
+}
 
 export function ScreeningTest() {
   const { applicationId } = useParams<{ applicationId: string }>()
@@ -15,32 +53,56 @@ export function ScreeningTest() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const startTimeRef = useRef<number>(Date.now())
 
-  const assessment = applicationId ? mockAssessment : null
-  const questions = assessment?.questions ?? []
+  const { data: config, isLoading, error } = useQuery({
+    queryKey: ['screening', applicationId],
+    queryFn: () => screeningApi.get(applicationId!),
+    enabled: !!applicationId,
+  })
+
+  const questions = config?.questions ?? []
+  const durationMinutes = config?.duration_minutes ?? 45
   const current = questions[currentIndex] ?? null
+
+  useEffect(() => {
+    if (config && !submitted) startTimeRef.current = Date.now()
+  }, [config, submitted])
 
   const handleExpire = useCallback(() => {
     if (!submitted) submitTest()
   }, [submitted])
 
-  function submitTest() {
+  async function submitTest() {
+    if (!applicationId) return
+    setSubmitError('')
     setSubmitted(true)
-    // Mock: always "pass" for demo; real app would POST answers and get score vs cutoff
-    setTimeout(() => {
-      navigate('/seeker/dashboard')
-    }, 2000)
+    try {
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000)
+      const res = await screeningApi.submit(applicationId, {
+        answers,
+        time_spent_sec: timeSpent,
+      })
+      setSubmitResult(res)
+      setTimeout(() => navigate('/seeker/dashboard'), 2500)
+    } catch (e) {
+      setSubmitError(e instanceof Error ? e.message : 'Submit failed')
+      setSubmitted(false)
+    }
   }
+
+  const [submitResult, setSubmitResult] = useState<{ score: number; passed: boolean } | null>(null)
 
   function setAnswer(qId: string, value: string) {
     setAnswers((p) => ({ ...p, [qId]: value }))
   }
 
-  if (!assessment || questions.length === 0) {
+  if (!applicationId) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-400">Assessment not found.</p>
+          <p className="text-slate-400">Invalid assessment.</p>
           <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
             Back to jobs
           </Link>
@@ -49,16 +111,75 @@ export function ScreeningTest() {
     )
   }
 
-  if (submitted) {
+  if (isLoading || (!config && !error)) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center text-slate-400">Loading screening…</div>
+      </div>
+    )
+  }
+
+  if (error || !config) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-slate-400">Could not load assessment. Please log in and try again.</p>
+          <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
+            Back to jobs
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-slate-400">No questions configured.</p>
+          <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
+            Back to jobs
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (submitted && !submitError && !submitResult) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center text-slate-400">Submitting…</div>
+      </div>
+    )
+  }
+
+  if (submitted && submitResult) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
           <h2 className="text-xl font-bold text-white">Test submitted</h2>
           <p className="mt-2 text-slate-400">
-            Your answers have been scored. If you meet the cutoff, you’ll be able to upload your
-            resume and complete your application.
+            Score: <strong className="text-white">{submitResult.score}%</strong>
+            {submitResult.passed ? ' — You passed! You can now upload your resume to complete your application.' : ' — Below cutoff. Better luck next time.'}
           </p>
           <p className="mt-4 text-sm text-slate-500">Redirecting to dashboard…</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (submitted && submitError) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
+          <p className="text-red-400">{submitError}</p>
+          <button
+            type="button"
+            onClick={() => { setSubmitted(false); setSubmitError(''); }}
+            className="mt-4 px-4 py-2 rounded-lg bg-slate-700 text-white"
+          >
+            Try again
+          </button>
         </div>
       </div>
     )
@@ -69,17 +190,14 @@ export function ScreeningTest() {
       <header className="border-b border-slate-800 bg-slate-900/50 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link
-              to="/seeker/jobs"
-              className="text-sm text-slate-400 hover:text-white"
-            >
+            <Link to="/seeker/jobs" className="text-sm text-slate-400 hover:text-white">
               ← Exit
             </Link>
-            <h1 className="font-semibold text-white">{assessment.title ?? 'Preliminary screening'}</h1>
+            <h1 className="font-semibold text-white">Preliminary screening</h1>
           </div>
           <div className="flex items-center gap-3">
             <CountdownTimer
-              durationMinutes={DURATION_MIN}
+              durationMinutes={durationMinutes}
               onExpire={handleExpire}
               paused={paused}
             />
@@ -176,41 +294,6 @@ export function ScreeningTest() {
           </div>
         </main>
       </div>
-    </div>
-  )
-}
-
-function McqOptions({
-  options,
-  selected,
-  onSelect,
-}: {
-  options: McqOption[]
-  selected?: string
-  onSelect: (id: string) => void
-}) {
-  return (
-    <div className="space-y-2">
-      {options.map((opt) => (
-        <label
-          key={opt.id}
-          className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-            selected === opt.id
-              ? 'border-brand-500 bg-brand-500/10'
-              : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
-          }`}
-        >
-          <input
-            type="radio"
-            name="mcq"
-            value={opt.id}
-            checked={selected === opt.id}
-            onChange={() => onSelect(opt.id)}
-            className="sr-only"
-          />
-          <span className="text-slate-200">{opt.text}</span>
-        </label>
-      ))}
     </div>
   )
 }
