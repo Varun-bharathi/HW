@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronUp, ChevronDown, User, Send, Check, X, Code } from 'lucide-react'
+import { ChevronUp, ChevronDown, User, Check, X, Code, FileCheck } from 'lucide-react'
 import { jobsApi, type ApplicationListItem } from '@/api/jobs'
 import { applicationsApi } from '@/api/applications'
 import { CandidateDetailModal } from '@/components/recruiter/CandidateDetailModal'
@@ -11,7 +11,9 @@ type SortDir = 'asc' | 'desc'
 
 const statusLabels: Record<string, string> = {
   screening: 'Screening',
+  screening_submitted: 'Screening done',
   passed_screening: 'Passed screening',
+  passed_aptitude: 'Passed aptitude',
   resume_submitted: 'Resume submitted',
   under_review: 'Under review',
   shortlisted: 'Shortlisted',
@@ -55,6 +57,7 @@ export function JobApplicants() {
       }
     },
   })
+
   const sendAssessmentMu = useMutation({
     mutationFn: (appId: string) => applicationsApi.sendAssessment(appId),
     onSuccess: () => {
@@ -64,6 +67,7 @@ export function JobApplicants() {
       }
     },
   })
+
   const sendCodingMu = useMutation({
     mutationFn: (appId: string) => applicationsApi.sendCodingAssessment(appId),
     onSuccess: () => {
@@ -247,12 +251,12 @@ export function JobApplicants() {
                     </span>
                     {app.aptitude_score != null && (
                       <span className="font-mono text-brand-400 text-sm">
-                        Aptitude: {app.aptitude_score}/30
+                        Aptitude: {app.aptitude_score}/10
                       </span>
                     )}
                     {app.coding_score != null && (
                       <span className="font-mono text-purple-400 text-sm">
-                        Coding: {app.coding_score}/20
+                        Coding: {app.coding_score}/50
                       </span>
                     )}
                   </div>
@@ -280,18 +284,22 @@ export function JobApplicants() {
                     >
                       <User className="w-4 h-4" />
                     </button>
-                    {!['accepted', 'coding_sent', 'coding_completed'].includes(app.status ?? '') && (
+
+
+                    {/* Recruiter accepts resume -> accepted -> sends aptitude -> assessment_sent -> assessment_completed -> recruiter accepts -> passed_aptitude -> sends coding -> coding_sent */}
+
+                    {app.status === 'accepted' && (
                       <button
                         onClick={() => sendAssessmentMu.mutate(app.id)}
-                        disabled={sendAssessmentMu.isPending || !['passed_screening', 'shortlisted'].includes(app.status ?? '')}
-                        className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-brand-400 disabled:opacity-30 disabled:hover:text-slate-400"
-                        title="Send Aptitude Assessment"
+                        disabled={sendAssessmentMu.isPending}
+                        className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-brand-400 disabled:opacity-30"
+                        title="Send Aptitude Test"
                       >
-                        <Send className="w-4 h-4" />
+                        <FileCheck className="w-4 h-4" />
                       </button>
                     )}
 
-                    {app.status === 'accepted' && (
+                    {app.status === 'passed_aptitude' && (
                       <button
                         onClick={() => sendCodingMu.mutate(app.id)}
                         disabled={sendCodingMu.isPending}
@@ -302,26 +310,37 @@ export function JobApplicants() {
                       </button>
                     )}
 
-                    {app.status !== 'accepted' && app.status !== 'rejected' && app.status !== 'coding_sent' && app.status !== 'coding_completed' && (
-                      <>
-                        <button
-                          onClick={() => acceptMu.mutate(app.id)}
-                          disabled={acceptMu.isPending || rejectMu.isPending}
-                          className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-emerald-400 disabled:opacity-50"
-                          title="Accept"
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => rejectMu.mutate(app.id)}
-                          disabled={acceptMu.isPending || rejectMu.isPending}
-                          className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-red-400 disabled:opacity-50"
-                          title="Reject"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </>
-                    )}
+                    {app.status !== 'accepted' &&
+                      app.status !== 'rejected' &&
+                      app.status !== 'passed_aptitude' &&
+                      app.status !== 'coding_sent' &&
+                      app.status !== 'coding_completed' &&
+                      app.status !== 'assessment_sent' && (
+                        <>
+                          <button
+                            onClick={() => acceptMu.mutate(app.id)}
+                            disabled={acceptMu.isPending || rejectMu.isPending}
+                            className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-emerald-400 disabled:opacity-50"
+                            title={
+                              app.status === 'screening' || app.status === 'screening_submitted'
+                                ? 'Pass Screening'
+                                : app.status === 'assessment_completed'
+                                  ? 'Pass Aptitude'
+                                  : 'Accept'
+                            }
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => rejectMu.mutate(app.id)}
+                            disabled={acceptMu.isPending || rejectMu.isPending}
+                            className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-red-400 disabled:opacity-50"
+                            title="Reject"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                   </div>
                 </td>
               </tr>

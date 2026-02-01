@@ -5,7 +5,7 @@ export interface QuestionTemplate {
     options?: string[]
     solution?: string // For basic checking or reference
     correctIndex?: number
-    starterCode?: string
+    starterCode?: string | Record<string, string>
     testCases?: { input: string; expected: string }[]
     examples?: { input: string; output: string; explanation?: string }[]
 }

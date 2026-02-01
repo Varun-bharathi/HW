@@ -7,6 +7,7 @@ import type { ApplicationListItem } from '@/api/jobs'
 
 const statusLabels: Record<string, string> = {
   screening: 'Screening',
+  screening_submitted: 'Screening under review',
   passed_screening: 'Passed screening',
   resume_submitted: 'Resume submitted',
   under_review: 'Under review',

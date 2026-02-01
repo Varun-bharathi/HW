@@ -292,14 +292,14 @@ screeningRouter.post('/:applicationId/submit', async (req: AuthRequest, res) => 
       data: {
         screeningAt: new Date(),
         screeningScore: pct,
-        status: passed ? 'passed_screening' : 'screening', // Or 'rejected'? Usually 'screening' -> 'passed' or stays 'screening' (failed)
+        status: 'screening_submitted',
       },
     })
 
     res.json({
       score: pct,
       passed,
-      status: passed ? 'passed_screening' : 'screening', // Frontend uses this to show result
+      status: 'screening_submitted',
     })
 
   } catch (e) {

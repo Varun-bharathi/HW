@@ -251,9 +251,16 @@ applicationsRouter.patch('/:id/accept', requireRole('recruiter'), async (req: Au
       res.status(404).json({ message: 'Application not found' })
       return
     }
+    const newStatus =
+      app.status === 'screening' || app.status === 'screening_submitted'
+        ? 'passed_screening'
+        : app.status === 'assessment_completed'
+          ? 'passed_aptitude'
+          : 'accepted'
+
     const updated = await prisma.application.update({
       where: { id },
-      data: { status: 'accepted' },
+      data: { status: newStatus },
       include: {
         job: { select: { id: true, title: true, location: true, employmentType: true, requiredSkills: true } },
         jobSeeker: { select: { email: true, jobSeekerProfile: { select: { fullName: true } } } },
@@ -374,9 +381,9 @@ applicationsRouter.post('/:id/assessment/start', requireRole('job_seeker'), asyn
     })
 
     if (!attempt) {
-      const verbal = APTITUDE_POOL.filter(q => q.category === 'Verbal').sort(() => 0.5 - Math.random()).slice(0, 10)
-      const quant = APTITUDE_POOL.filter(q => q.category === 'Quantitative').sort(() => 0.5 - Math.random()).slice(0, 10)
-      const reasoning = APTITUDE_POOL.filter(q => q.category === 'Logical Reasoning').sort(() => 0.5 - Math.random()).slice(0, 10)
+      const verbal = APTITUDE_POOL.filter(q => q.category === 'Verbal').sort(() => 0.5 - Math.random()).slice(0, 3)
+      const quant = APTITUDE_POOL.filter(q => q.category === 'Quantitative').sort(() => 0.5 - Math.random()).slice(0, 4)
+      const reasoning = APTITUDE_POOL.filter(q => q.category === 'Logical Reasoning').sort(() => 0.5 - Math.random()).slice(0, 3)
       // Fallback if pool is small (should not happen with my file)
       const questions = [...verbal, ...quant, ...reasoning]
 
@@ -524,6 +531,11 @@ applicationsRouter.post(
 
 // Helper to prepare source code with driver for testing
 export function prepareSource(lang: string, userCode: string, input: string, funcName: string): string {
+  // Common adjustments
+  // JS/Python input is comma separated values.
+  // Existing input in testCases might be `[1,2,3], 4`.
+  // Note: input string might contain newlines in original data but `testCases` in file has commas.
+
   if (lang === 'javascript') {
     return `${userCode}
 try {
@@ -531,9 +543,8 @@ try {
   console.log(JSON.stringify(result));
 } catch(e) { console.error(e.message); }`
   }
+
   if (lang === 'python') {
-    // Python inputs need to be adapted from JS syntax (e.g. true -> True, null -> None) if strictly JS inputs
-    // But let's assume inputs are reasonably compatible or simple
     let pyInput = input.replace(/true/g, 'True').replace(/false/g, 'False').replace(/null/g, 'None')
     return `${userCode}
 import json
@@ -543,8 +554,95 @@ try:
 except Exception as e:
     print(str(e))`
   }
-  // For other languages, we'd need more complex boilerplate (class wrappers for Java/C#, main for C/C++)
-  // Returning raw code for now (will likely fail execution if not complete program)
+
+  if (lang === 'java') {
+    // Input `[1,2,3], 2` -> `new int[]{1,2,3}, 2`
+    const args = input.replace(/\[/g, 'new int[]{').replace(/\]/g, '}')
+    // We assume the user code is `class Solution { ... }`
+    return `${userCode}
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            Solution s = new Solution();
+            System.out.println(s.${funcName}(${args}));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}`
+  }
+
+  if (lang === 'csharp' || lang === 'c#') {
+    // Input `[1,2,3], 2` -> `new int[]{1,2,3}, 2`
+    const args = input.replace(/\[/g, 'new int[]{').replace(/\]/g, '}')
+    return `using System;
+using System.Collections.Generic;
+
+${userCode}
+
+public class Program {
+    public static void Main() {
+        try {
+            Solution s = new Solution();
+            Console.WriteLine(s.${funcName.charAt(0).toUpperCase() + funcName.slice(1)}(${args}));
+        } catch (Exception e) {
+            Console.WriteLine(e.Message);
+        }
+    }
+}`
+  }
+
+  if (lang === 'cpp' || lang === 'c++') {
+    // Input `[1,2,3], 2` -> `{1,2,3}, 2`
+    const args = input.replace(/\[/g, '{').replace(/\]/g, '}')
+    return `#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <numeric>
+
+using namespace std;
+
+${userCode}
+
+int main() {
+    Solution s;
+    auto res = s.${funcName}(${args});
+    // Simple print for int/bool. Vectors need helper.
+    // Assuming int/bool/float return for now based on questions.
+    cout << boolalpha << res << endl;
+    return 0;
+}`
+  }
+
+  if (lang === 'c') {
+    // Input `[1,2,3], 2` -> `(int[]){1,2,3}, 3, 2` (inject size)
+    // Extract array to count size.
+    // Heuristic: finding [ ... ] block.
+    let args = input
+    const arrayMatch = input.match(/\[(.*?)\]/)
+    let size = 0
+    if (arrayMatch) {
+      const content = arrayMatch[1]
+      size = content.split(',').filter(x => x.trim().length > 0).length
+      // Replace [ ... ] with (int[]){ ... }, size
+      args = input.replace(/\[(.*?)\]/, `(int[]){$1}, ${size}`)
+    }
+
+    return `#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+${userCode}
+
+int main() {
+    // Assuming int/bool return
+    printf("%d", ${funcName}(${args}));
+    return 0;
+}`
+  }
+
   return userCode
 }
 
@@ -603,18 +701,16 @@ applicationsRouter.post(
 
       // Run each test case (Limit concurrency or run sequential)
       for (const tc of question.testCases) {
-        // Mock check for languages that are hard to wrap dynamically without heavy logic
-        if (!['javascript', 'python'].includes(language)) {
-          results.push({
-            input: tc.input,
-            expected: tc.expected,
-            output: 'Execution not supported for this language in demo',
-            passed: true // Mock pass to satisfy requirement "without time limit exceeding"
-          })
-          continue
-        }
-
+        // Prepare source with driver code
         const source = prepareSource(language, code, tc.input, funcName)
+
+        // Map language names for Piston if needed
+        let pistonLang = language
+        if (language === 'c#') pistonLang = 'csharp'
+        if (language === 'c++') pistonLang = 'cpp'
+        if (language === 'python') pistonLang = 'python'
+        if (language === 'javascript') pistonLang = 'javascript'
+        if (language === 'c') pistonLang = 'c'
 
         try {
           const runRes = await fetch('https://emkc.org/api/v2/piston/execute', {
@@ -777,11 +873,19 @@ applicationsRouter.post('/:id/coding-assessment/submit', requireRole('job_seeker
               // Piston might rate limit or be slow.
               const source = prepareSource(language, userCode, tc.input, funcName)
 
+              // Map language names for Piston
+              let pistonLang = language
+              if (language === 'c#') pistonLang = 'csharp'
+              if (language === 'c++') pistonLang = 'cpp'
+              if (language === 'python') pistonLang = 'python'
+              if (language === 'javascript') pistonLang = 'javascript'
+              if (language === 'c') pistonLang = 'c'
+
               const runRes = await fetch('https://emkc.org/api/v2/piston/execute', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  language: language === 'javascript' ? 'javascript' : language === 'python' ? 'python' : language,
+                  language: pistonLang,
                   version: '*',
                   files: [{ content: source }]
                 })
@@ -802,7 +906,7 @@ applicationsRouter.post('/:id/coding-assessment/submit', requireRole('job_seeker
       }
 
       if (passedAll) {
-        totalScore += 10
+        totalScore += 25
       }
     }
 

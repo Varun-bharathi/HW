@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  BarChart3,
   Users,
   Briefcase,
-  TrendingUp,
   ArrowRight,
   Send,
 } from 'lucide-react'
@@ -22,7 +20,6 @@ import { jobsApi } from '@/api/jobs'
 const funnelData = [
   { stage: 'Applied', count: 6, fill: '#0ea5e9' },
   { stage: 'Screened', count: 4, fill: '#38bdf8' },
-  { stage: 'Shortlisted', count: 2, fill: '#7dd3fc' },
   { stage: 'Interview', count: 1, fill: '#bae6fd' },
 ]
 
@@ -51,7 +48,7 @@ export function RecruiterDashboard() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
           <div className="flex items-center justify-between">
             <div>
@@ -71,28 +68,6 @@ export function RecruiterDashboard() {
             </div>
             <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
               <Users className="w-6 h-6 text-emerald-400" />
-            </div>
-          </div>
-        </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-400">Shortlisted</p>
-              <p className="mt-1 text-2xl font-bold text-white">1</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-amber-400" />
-            </div>
-          </div>
-        </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-400">Avg. match score</p>
-              <p className="mt-1 text-2xl font-bold text-white">82%</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
-              <BarChart3 className="w-6 h-6 text-violet-400" />
             </div>
           </div>
         </div>
@@ -177,52 +152,51 @@ export function RecruiterDashboard() {
             <div className="p-8 text-center text-slate-400">Loading…</div>
           ) : (
             jobs.map((job) => (
-            <div
-              key={job.id}
-              className="p-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
-            >
-              <div>
-                <p className="font-medium text-white">{job.title}</p>
-                <p className="text-sm text-slate-400">
-                  {job.location} · {job.employment_type}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 flex-wrap">
-                <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                    job.status === 'live'
+              <div
+                key={job.id}
+                className="p-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-white">{job.title}</p>
+                  <p className="text-sm text-slate-400">
+                    {job.location} · {job.employment_type}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${job.status === 'live'
                       ? 'bg-emerald-500/20 text-emerald-400'
                       : 'bg-slate-600/50 text-slate-400'
-                  }`}
-                >
-                  {job.status}
-                </span>
-                {job.status === 'draft' && (
-                  <button
-                    type="button"
-                    onClick={() => publishMu.mutate(job.id)}
-                    disabled={publishMu.isPending && publishMu.variables === job.id}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
+                      }`}
                   >
-                    <Send className="w-4 h-4" />
-                    {publishMu.isPending && publishMu.variables === job.id ? 'Publishing…' : 'Publish'}
-                  </button>
-                )}
-                <Link
-                  to={`/recruiter/jobs/${job.id}/edit`}
-                  className="text-sm font-medium text-slate-400 hover:text-white"
-                >
-                  Edit
-                </Link>
-                <Link
-                  to={`/recruiter/jobs/${job.id}/applicants`}
-                  className="text-sm font-medium text-brand-400 hover:text-brand-300"
-                >
-                  View applicants
-                </Link>
+                    {job.status}
+                  </span>
+                  {job.status === 'draft' && (
+                    <button
+                      type="button"
+                      onClick={() => publishMu.mutate(job.id)}
+                      disabled={publishMu.isPending && publishMu.variables === job.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
+                    >
+                      <Send className="w-4 h-4" />
+                      {publishMu.isPending && publishMu.variables === job.id ? 'Publishing…' : 'Publish'}
+                    </button>
+                  )}
+                  <Link
+                    to={`/recruiter/jobs/${job.id}/edit`}
+                    className="text-sm font-medium text-slate-400 hover:text-white"
+                  >
+                    Edit
+                  </Link>
+                  <Link
+                    to={`/recruiter/jobs/${job.id}/applicants`}
+                    className="text-sm font-medium text-brand-400 hover:text-brand-300"
+                  >
+                    View applicants
+                  </Link>
+                </div>
               </div>
-            </div>
-          )))}
+            )))}
         </div>
       </div>
     </div>

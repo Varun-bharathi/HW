@@ -10,7 +10,7 @@ export function CodingTest() {
     const { applicationId } = useParams<{ applicationId: string }>()
     const navigate = useNavigate()
     const [currentQIndex, setCurrentQIndex] = useState(0)
-    const [answers, setAnswers] = useState<Record<string, string>>({})
+    const [answers, setAnswers] = useState<Record<string, string>>({}) // Key: "index-lang"
     const [results, setResults] = useState<Record<string, { input: string; expected: string; output: string; passed: boolean }[]>>({})
     const [submitted, setSubmitted] = useState(false)
     const [submitError, setSubmitError] = useState('')
@@ -56,11 +56,20 @@ export function CodingTest() {
     // Safety check for questions
     const hasQuestions = config?.questions && config.questions.length > 0
     const currentQuestion = hasQuestions ? config.questions[currentQIndex] : null
-    const currentCode = answers[currentQIndex.toString()] ?? currentQuestion?.starterCode ?? '// Write your code here'
+
+    const getStarterCode = (q: any, lang: string) => {
+        if (!q?.starterCode) return '// Write your code here'
+        if (typeof q.starterCode === 'string') return q.starterCode
+        // Map common aliases if needed, though we try to keep them synced
+        return q.starterCode[lang] || '// No starter code available for this language'
+    }
+
+    const answerKey = `${currentQIndex}-${language}`
+    const currentCode = answers[answerKey] ?? getStarterCode(currentQuestion, language)
 
     const handleCodeChange = (val: string | undefined) => {
         if (val !== undefined) {
-            setAnswers(prev => ({ ...prev, [currentQIndex]: val }))
+            setAnswers(prev => ({ ...prev, [answerKey]: val }))
         }
     }
 
@@ -86,7 +95,16 @@ export function CodingTest() {
         if (submitted) return
         setSubmitted(true)
         try {
-            await applicationsApi.submitCodingAssessment(applicationId!, answers, language)
+            // Prepare answers: { "0": code, "1": code } for the *current* language
+            const submissionAnswers: Record<string, string> = {}
+            if (config?.questions) {
+                config.questions.forEach((_: any, idx: number) => {
+                    const key = `${idx}-${language}`
+                    submissionAnswers[idx] = answers[key] || getStarterCode(config.questions[idx], language)
+                })
+            }
+
+            await applicationsApi.submitCodingAssessment(applicationId!, submissionAnswers, language)
             // Redirect after short delay
             setTimeout(() => {
                 navigate('/seeker/applications')
