@@ -288,7 +288,7 @@ export function JobApplicants() {
 
                     {/* Recruiter accepts resume -> accepted -> sends aptitude -> assessment_sent -> assessment_completed -> recruiter accepts -> passed_aptitude -> sends coding -> coding_sent */}
 
-                    {app.status === 'accepted' && (
+                    {(app.status === 'accepted' || app.status === 'shortlisted') && (
                       <button
                         onClick={() => sendAssessmentMu.mutate(app.id)}
                         disabled={sendAssessmentMu.isPending}

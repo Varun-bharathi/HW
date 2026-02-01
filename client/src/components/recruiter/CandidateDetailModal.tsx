@@ -50,6 +50,22 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
                 {application.screening_score != null ? `${application.screening_score}%` : '—'}
               </p>
             </div>
+            <div>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Aptitude score
+              </p>
+              <p className="mt-1 text-2xl font-bold text-brand-400">
+                {application.aptitude_score != null ? `${application.aptitude_score}/10` : '—'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Coding score
+              </p>
+              <p className="mt-1 text-2xl font-bold text-purple-400">
+                {application.coding_score != null ? `${application.coding_score}/50` : '—'}
+              </p>
+            </div>
           </div>
 
           <div>

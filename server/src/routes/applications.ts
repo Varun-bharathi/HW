@@ -143,7 +143,7 @@ applicationsRouter.post(
     try {
       const u = req.user!
       const { id } = req.params
-      const file = (req as unknown as { file?: { path: string; filename: string } }).file
+      const file = (req as unknown as { file?: { path: string; filename: string; mimetype: string; originalname: string } }).file
       if (!file) {
         res.status(400).json({ message: 'Resume file (PDF/DOC/DOCX) required' })
         return
@@ -151,7 +151,7 @@ applicationsRouter.post(
       const app = await prisma.application.findUnique({
         where: { id },
         include: {
-          job: { select: { id: true, title: true, location: true, employmentType: true, requiredSkills: true } },
+          job: { select: { id: true, title: true, location: true, employmentType: true, requiredSkills: true, description: true } },
           jobSeeker: { select: { email: true, jobSeekerProfile: { select: { fullName: true } } } },
         },
       })
@@ -165,61 +165,53 @@ applicationsRouter.post(
       }
       const resumeUrl = `/api/uploads/${file.filename}`
 
-      // Real Text Extraction & Analysis
-      let textContent = ''
+      // Call Python Resume Parser Service
+      let matchScore = 0
+      let resumeSummary = 'Parsed via Python Service'
+
       try {
-        const f = file as unknown as { mimetype: string; filename: string }
-        if (f.mimetype === 'application/pdf') {
-          const pdfParseModule = await import('pdf-parse')
-          const pdfParse = (pdfParseModule as any).default ?? pdfParseModule
-          const dataBuffer = fs.readFileSync(path.join(uploadsDir, file.filename))
-          const pdfData = await pdfParse(dataBuffer)
-          textContent = pdfData.text
+        const fileBuffer = fs.readFileSync(path.join(uploadsDir, file.filename))
+        console.log('DEBUG: Read file buffer size:', fileBuffer.length)
+        const blob = new Blob([fileBuffer], { type: file.mimetype })
+
+        console.log('DEBUG: Job Description Length:', app.job?.description?.length)
+
+        const formData = new FormData()
+        formData.append('resume', blob, file.originalname)
+        formData.append('job_description', app.job?.description || '')
+
+        console.log('DEBUG: Sending to Python API...')
+        const pyRes = await fetch('http://localhost:5001/parse-resume', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (pyRes.ok) {
+          const pyData = await pyRes.json()
+          matchScore = pyData.resume_score ?? 0
+          if (pyData.extracted_text_preview) {
+            resumeSummary = pyData.extracted_text_preview
+          }
         } else {
-          // Fallback for DOC/DOCX or if parser fails (simple text reading if possible, else stub)
-          // For now, if not PDF, we default to empty text or specific mock
-          textContent = ''
+          console.error('Python API returned error:', await pyRes.text())
         }
       } catch (err) {
-        console.error('Failed to parse resume text:', err)
-        textContent = ''
-      }
-
-      const jobSkills = parseJsonArray(app.job?.requiredSkills ?? null)
-      const foundSkills: string[] = []
-
-      // Check for skills in text (case-insensitive)
-      if (jobSkills.length > 0 && textContent) {
-        const lowerText = textContent.toLowerCase()
-        jobSkills.forEach(skill => {
-          if (lowerText.includes(skill.toLowerCase())) {
-            foundSkills.push(skill)
-          }
-        })
-      } else if (!textContent && jobSkills.length > 0) {
-        // Fallback if no text extracted (e.g. non-pdf or empty) so we don't always give 0
-        // Actually, if we can't read it, 0 is fair, but for demo let's keep a tiny random chance or mock?
-        // No, let's correspond to reality: 0 if not found.
+        console.error('Failed to call Resume Parser API:', err)
+        // Fallback to 0 or keeping previous logic if critical, but user wants Python API specifically.
       }
 
       const resumeParsed = JSON.stringify({
-        skills: foundSkills,
-        experience: 'Extracted from resume',
-        summary: textContent.slice(0, 200) + '...', // Preview
+        skills: [], // We could extract skills in python too if needed, but for now just score.
+        experience: 'Analyzed by AI',
+        summary: resumeSummary,
       })
 
-      const matchScore =
-        jobSkills.length > 0
-          ? Math.round(
-            (foundSkills.length / jobSkills.length) * 100
-          )
-          : null
       const updated = await prisma.application.update({
         where: { id },
         data: {
           resumeUrl,
           resumeParsed,
-          resumeJdMatch: matchScore ?? undefined,
+          resumeJdMatch: matchScore,
           status: 'resume_submitted',
           resumeSubmittedAt: new Date(),
         },
@@ -254,9 +246,11 @@ applicationsRouter.patch('/:id/accept', requireRole('recruiter'), async (req: Au
     const newStatus =
       app.status === 'screening' || app.status === 'screening_submitted'
         ? 'passed_screening'
-        : app.status === 'assessment_completed'
-          ? 'passed_aptitude'
-          : 'accepted'
+        : app.status === 'resume_submitted'
+          ? 'shortlisted'
+          : app.status === 'assessment_completed'
+            ? 'passed_aptitude'
+            : 'accepted'
 
     const updated = await prisma.application.update({
       where: { id },
