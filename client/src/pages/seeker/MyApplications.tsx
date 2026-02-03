@@ -1,18 +1,21 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileCheck, ExternalLink, Upload } from 'lucide-react'
+import { FileCheck, ExternalLink, Upload, Code } from 'lucide-react'
 import { applicationsApi } from '@/api/applications'
 import type { ApplicationListItem } from '@/api/jobs'
 
 const statusLabels: Record<string, string> = {
   screening: 'Screening',
+  screening_submitted: 'Screening under review',
   passed_screening: 'Passed screening',
   resume_submitted: 'Resume submitted',
   under_review: 'Under review',
   shortlisted: 'Shortlisted',
-  assessment_sent: 'Assessment sent',
+  assessment_sent: 'Aptitude Test Pending',
   assessment_completed: 'Assessment done',
+  coding_sent: 'Coding Test Pending',
+  coding_completed: 'Coding done',
   interview_scheduled: 'Interview',
   accepted: 'Accepted',
   rejected: 'Rejected',
@@ -89,9 +92,9 @@ export function MyApplications() {
                   <p className="text-sm text-slate-400">
                     {app.job?.location ?? '—'} · {app.job?.employment_type ?? '—'}
                   </p>
-                  {app.screening_score != null && (
+                  {app.resume_jd_match != null && (
                     <p className="mt-1 text-xs text-slate-500">
-                      Screening: {app.screening_score}% · Match: {app.resume_jd_match ?? '—'}%
+                      Match: {app.resume_jd_match}%
                     </p>
                   )}
                 </div>
@@ -107,14 +110,32 @@ export function MyApplications() {
                       {uploadingId === app.id ? 'Uploading…' : 'Upload resume'}
                     </button>
                   )}
+                  {app.status === 'assessment_sent' && (
+                    <Link
+                      to={`/assessment/aptitude/${app.id}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 text-sm font-medium"
+                    >
+                      <FileCheck className="w-4 h-4" />
+                      Take Aptitude Test
+                    </Link>
+                  )}
+                  {app.status === 'coding_sent' && (
+                    <Link
+                      to={`/assessment/coding/${app.id}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 text-sm font-medium"
+                    >
+                      <Code className="w-4 h-4" />
+                      Take Coding Test
+                    </Link>
+                  )}
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-medium ${app.status === 'accepted'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : app.status === 'rejected'
-                          ? 'bg-red-500/20 text-red-400'
-                          : app.status === 'shortlisted'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-slate-600/50 text-slate-400'
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : app.status === 'rejected'
+                        ? 'bg-red-500/20 text-red-400'
+                        : app.status === 'shortlisted'
+                          ? 'bg-amber-500/20 text-amber-400'
+                          : 'bg-slate-600/50 text-slate-400'
                       }`}
                   >
                     {statusLabels[app.status]}

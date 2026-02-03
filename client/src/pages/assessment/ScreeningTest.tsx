@@ -183,8 +183,7 @@ export function ScreeningTest() {
         <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
           <h2 className="text-xl font-bold text-white">Test submitted</h2>
           <p className="mt-2 text-slate-400">
-            Score: <strong className="text-white">{submitResult.score}%</strong>
-            {submitResult.passed ? ' — You passed! You can now upload your resume to complete your application.' : ' — Below cutoff. Better luck next time.'}
+            {submitResult.passed ? 'You passed! You can now upload your resume to complete your application.' : 'Below cutoff. Better luck next time.'}
           </p>
           <p className="mt-4 text-sm text-slate-500">Redirecting to dashboard…</p>
         </div>
@@ -212,7 +211,7 @@ export function ScreeningTest() {
   return (
     <div className="min-h-screen bg-slate-950">
       <header className="border-b border-slate-800 bg-slate-900/50 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-[95vw] mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/seeker/jobs" className="text-sm text-slate-400 hover:text-white">
               ← Exit
@@ -236,7 +235,7 @@ export function ScreeningTest() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 flex gap-6">
+      <div className="max-w-[95vw] mx-auto px-4 py-6 flex gap-6">
         <aside className="w-48 shrink-0">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
             Questions
@@ -291,12 +290,22 @@ export function ScreeningTest() {
                       <h2 className="text-lg font-bold text-white mb-4">{current.content.split(':')[0]}</h2>
                       {current.content.split(':').slice(1).join(':').trim()}
 
-                      <div className="mt-6 space-y-4">
-                        <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800 font-mono text-xs">
-                          <div className="text-slate-500 mb-1">Example 1:</div>
-                          Refer to test cases in the console after running.
+                      {current.examples && current.examples.length > 0 && (
+                        <div className="mt-6 space-y-4">
+                          {current.examples.map((ex, i) => (
+                            <div key={i} className="bg-slate-950/50 p-3 rounded-lg border border-slate-800 font-mono text-xs">
+                              <div className="text-slate-500 mb-1">Example {i + 1}:</div>
+                              <div className="mb-1"><span className="text-slate-400">Input:</span> {ex.input}</div>
+                              <div className="mb-1"><span className="text-slate-400">Output:</span> {ex.output}</div>
+                              {ex.explanation && (
+                                <div><span className="text-slate-400">Explanation:</span> {ex.explanation}</div>
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      </div>
+                      )}
+
+
                     </div>
                   </div>
 

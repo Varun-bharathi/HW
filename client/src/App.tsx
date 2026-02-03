@@ -22,6 +22,8 @@ import { MyApplications } from './pages/seeker/MyApplications'
 import { JobSeekerProfile } from './pages/seeker/JobSeekerProfile'
 
 import { ScreeningTest } from './pages/assessment/ScreeningTest'
+import { AptitudeTest } from './pages/assessment/AptitudeTest'
+import { CodingTest } from './pages/assessment/CodingTest'
 import { AssessmentView } from './pages/assessment/AssessmentView'
 
 import { MessagingInbox } from './pages/messaging/MessagingInbox'
@@ -78,6 +80,8 @@ function App() {
 
       {/* Assessments — accessible during flow */}
       <Route path="/assessment/screening/:applicationId" element={<ScreeningTest />} />
+      <Route path="/assessment/aptitude/:applicationId" element={<AptitudeTest />} />
+      <Route path="/assessment/coding/:applicationId" element={<CodingTest />} />
       <Route path="/assessment/:assessmentId" element={<AssessmentView />} />
 
       {/* Shared */}
