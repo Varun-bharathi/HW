@@ -105,6 +105,7 @@ jobsRouter.get('/:id/applications', requireRole('recruiter'), async (req: AuthRe
         resume_parsed: a.resumeParsed ? (JSON.parse(a.resumeParsed) as unknown) : undefined,
         screening_score: a.screeningScore,
         aptitude_score: a.aptitudeScore,
+        coding_score: a.codingScore,
         screening_at: a.screeningAt?.toISOString(),
         resume_submitted_at: a.resumeSubmittedAt?.toISOString(),
         created_at: a.createdAt.toISOString(),

@@ -16,6 +16,7 @@ const statusLabels: Record<string, string> = {
   assessment_completed: 'Assessment done',
   coding_sent: 'Coding Test Pending',
   coding_completed: 'Coding done',
+  passed_coding: 'Passed Coding Test',
   interview_scheduled: 'Interview',
   accepted: 'Accepted',
   rejected: 'Rejected',
@@ -99,7 +100,7 @@ export function MyApplications() {
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  {(app.status === 'passed_screening' || app.status === 'accepted') && (
+                  {(app.status === 'passed_screening') && (
                     <button
                       type="button"
                       onClick={() => handleUploadClick(app)}

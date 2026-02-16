@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronUp, ChevronDown, User, Check, X, Code, FileCheck } from 'lucide-react'
+import { ChevronUp, ChevronDown, User, Check, X, Code, FileCheck, Calendar } from 'lucide-react'
 import { jobsApi, type ApplicationListItem } from '@/api/jobs'
 import { applicationsApi } from '@/api/applications'
 import { CandidateDetailModal } from '@/components/recruiter/CandidateDetailModal'
@@ -21,6 +21,7 @@ const statusLabels: Record<string, string> = {
   assessment_completed: 'Assessment done',
   coding_sent: 'Coding sent',
   coding_completed: 'Coding done',
+  passed_coding: 'Passed coding assessment',
   interview_scheduled: 'Interview',
   accepted: 'Accepted',
   rejected: 'Rejected',
@@ -314,7 +315,6 @@ export function JobApplicants() {
                       app.status !== 'rejected' &&
                       app.status !== 'passed_aptitude' &&
                       app.status !== 'coding_sent' &&
-                      app.status !== 'coding_completed' &&
                       app.status !== 'assessment_sent' && (
                         <>
                           <button
@@ -326,10 +326,18 @@ export function JobApplicants() {
                                 ? 'Pass Screening'
                                 : app.status === 'assessment_completed'
                                   ? 'Pass Aptitude'
-                                  : 'Accept'
+                                  : app.status === 'coding_completed'
+                                    ? 'Pass Coding'
+                                    : app.status === 'passed_coding'
+                                      ? 'Send HR Interview'
+                                      : 'Accept'
                             }
                           >
-                            <Check className="w-4 h-4" />
+                            {app.status === 'passed_coding' ? (
+                              <Calendar className="w-4 h-4" />
+                            ) : (
+                              <Check className="w-4 h-4" />
+                            )}
                           </button>
                           <button
                             onClick={() => rejectMu.mutate(app.id)}

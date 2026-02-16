@@ -250,7 +250,11 @@ applicationsRouter.patch('/:id/accept', requireRole('recruiter'), async (req: Au
           ? 'shortlisted'
           : app.status === 'assessment_completed'
             ? 'passed_aptitude'
-            : 'accepted'
+            : app.status === 'coding_completed'
+              ? 'passed_coding'
+              : app.status === 'passed_coding'
+                ? 'interview_scheduled'
+                : 'accepted'
 
     const updated = await prisma.application.update({
       where: { id },
