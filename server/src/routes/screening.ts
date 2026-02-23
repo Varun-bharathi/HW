@@ -64,7 +64,7 @@ screeningRouter.get('/:applicationId', async (req: AuthRequest, res) => {
       assessment_id: prelim.id,
       duration_minutes: config.duration_minutes ?? 45,
       cutoff: config.cutoff ?? 70,
-      questions: (prelim.questions ?? []).map((q) => ({
+      questions: (prelim.questions ?? []).map((q: any) => ({
         id: q.id,
         type: q.type,
         content: q.content,

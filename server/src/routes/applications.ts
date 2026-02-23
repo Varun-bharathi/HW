@@ -128,7 +128,7 @@ applicationsRouter.get('/', async (req: AuthRequest, res) => {
       },
       orderBy: { updatedAt: 'desc' },
     })
-    res.json(list.map((a) => appToJson(a, u.role)))
+    res.json(list.map((a: any) => appToJson(a, u.role)))
   } catch (e) {
     console.error(e)
     res.status(500).json({ message: 'Failed to list applications' })
@@ -187,7 +187,7 @@ applicationsRouter.post(
         })
 
         if (pyRes.ok) {
-          const pyData = await pyRes.json()
+          const pyData: any = await pyRes.json()
           matchScore = pyData.resume_score ?? 0
           if (pyData.extracted_text_preview) {
             resumeSummary = pyData.extracted_text_preview

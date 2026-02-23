@@ -1,0 +1,93 @@
+﻿
+> hireflow-server@0.1.0 db:seed
+> tsx prisma/seed.ts
+
+node.exe : TypeError: Cannot 
+read properties of undefined 
+(reading 'replace')
+At C:\Users\C.R.VARUN BHARATH
+I\AppData\Roaming\npm\npm.ps1
+:24 char:5
++     & "node$exe"  "$basedir
+/node_modules/npm/bin/npm-cli
+.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (TypeErr  
+  or: Cann...ding 'replace   
+ '):String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+    at 
+createBetterSQLite3Client (fi
+le:///C:/Users/C.R.VARUN%20BH
+ARATHI/Desktop/Hiring-Web-App
+lication/server/node_modules/
+@prisma/adapter-better-sqlite
+3/dist/index.mjs:612:22)
+    at PrismaBetterSqlite3Ada
+pterFactory.connect (file:///
+C:/Users/C.R.VARUN%20BHARATHI
+/Desktop/Hiring-Web-Applicati
+on/server/node_modules/@prism
+a/adapter-better-sqlite3/dist
+/index.mjs:601:59)
+    at Function.connect 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\engi
+nes\client\LocalExecutor.ts:4
+9:58)
+    at #connectExecutor 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\engi
+nes\client\ClientEngine.ts:23
+3:34)
+    at callback 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\engi
+nes\client\ClientEngine.ts:18
+2:35)
+    at Object.runInChildSpan 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\trac
+ing\TracingHelper.ts:28:12)
+    at di.runInChildSpan 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\trac
+ing\TracingHelper.ts:53:36)
+    at #ensureStarted 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\engi
+nes\client\ClientEngine.ts:17
+7:47)
+    at qt.request 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\core\engi
+nes\client\ClientEngine.ts:46
+4:52)
+    at Object.singleLoader 
+(C:\Users\C.R.VARUN BHARATHI\
+Desktop\Hiring-Web-Applicatio
+n\server\node_modules\@prisma
+\client\src\runtime\RequestHa
+ndler.ts:112:52) {
+  clientVersion: '7.4.1'
+}

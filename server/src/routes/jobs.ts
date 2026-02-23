@@ -26,7 +26,7 @@ jobsRouter.get('/', async (req: AuthRequest, res) => {
       where,
       orderBy: { updatedAt: 'desc' },
     })
-    const list = jobs.map((j) => ({
+    const list = jobs.map((j: any) => ({
       id: j.id,
       recruiter_id: j.recruiterId,
       title: j.title,
@@ -96,7 +96,7 @@ jobsRouter.get('/:id/applications', requireRole('recruiter'), async (req: AuthRe
       orderBy: [{ resumeJdMatch: 'desc' }, { screeningScore: 'desc' }],
     })
     res.json(
-      list.map((a) => ({
+      list.map((a: any) => ({
         id: a.id,
         job_id: a.jobId,
         job_seeker_id: a.jobSeekerId,
@@ -172,7 +172,7 @@ jobsRouter.post('/:id/apply', async (req: AuthRequest, res) => {
           assessment_id: prelim.id,
           duration_minutes: config.duration_minutes ?? 45,
           cutoff: config.cutoff ?? 70,
-          questions: (prelim.questions ?? []).map((q) => ({
+          questions: (prelim.questions ?? []).map((q: any) => ({
             id: q.id,
             type: q.type,
             content: q.content,

@@ -1,0 +1,8 @@
+src/routes/applications.ts(131,24): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/routes/applications.ts(191,24): error TS18046: 'pyData' is of type 'unknown'.
+src/routes/applications.ts(192,15): error TS18046: 'pyData' is of type 'unknown'.
+src/routes/applications.ts(193,29): error TS18046: 'pyData' is of type 'unknown'.
+src/routes/jobs.ts(29,28): error TS7006: Parameter 'j' implicitly has an 'any' type.
+src/routes/jobs.ts(99,17): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/routes/jobs.ts(175,52): error TS7006: Parameter 'q' implicitly has an 'any' type.
+src/routes/screening.ts(67,48): error TS7006: Parameter 'q' implicitly has an 'any' type.

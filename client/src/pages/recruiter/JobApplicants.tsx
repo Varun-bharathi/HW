@@ -315,6 +315,7 @@ export function JobApplicants() {
                       app.status !== 'rejected' &&
                       app.status !== 'passed_aptitude' &&
                       app.status !== 'coding_sent' &&
+                      app.status !== 'interview_scheduled' &&
                       app.status !== 'assessment_sent' && (
                         <>
                           <button
