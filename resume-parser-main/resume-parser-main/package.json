@@ -1,0 +1,33 @@
+{
+  "name": "resume-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nithinbharathi93/resume-parser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nithinbharathi93/resume-parser/issues"
+  },
+  "homepage": "https://github.com/Nithinbharathi93/resume-parser#readme",
+  "dependencies": {
+    "@huggingface/inference": "^4.13.12",
+    "@langchain/core": "^1.1.27",
+    "@langchain/textsplitters": "^1.0.1",
+    "@supabase/supabase-js": "^2.97.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "pdf-parse": "^1.1.1",
+    "pdf-parse-fork": "^1.2.0"
+  }
+}

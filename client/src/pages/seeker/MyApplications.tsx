@@ -100,7 +100,7 @@ export function MyApplications() {
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  {(app.status === 'passed_screening') && (
+                  {(app.status === 'passed_screening' || app.status === 'accepted') && (
                     <button
                       type="button"
                       onClick={() => handleUploadClick(app)}

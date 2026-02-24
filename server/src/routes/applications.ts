@@ -87,7 +87,7 @@ function appToJson(a: {
     status: a.status,
     resume_url: a.resumeUrl,
     resume_parsed: a.resumeParsed ? (JSON.parse(a.resumeParsed) as unknown) : undefined,
-    resume_jd_match: a.resumeJdMatch,
+    resume_jd_match: isRecruiter ? a.resumeJdMatch : undefined,
     screening_score: isRecruiter ? a.screeningScore : undefined,
     aptitude_score: isRecruiter ? a.aptitudeScore : undefined,
     coding_score: isRecruiter ? a.codingScore : undefined,
@@ -180,8 +180,8 @@ applicationsRouter.post(
         formData.append('resume', blob, file.originalname)
         formData.append('job_description', app.job?.description || '')
 
-        console.log('DEBUG: Sending to Python API...')
-        const pyRes = await fetch('http://localhost:5001/parse-resume', {
+        console.log('DEBUG: Sending to Node API...')
+        const pyRes = await fetch('http://localhost:3001/api/parse-resume', {
           method: 'POST',
           body: formData
         })
@@ -193,7 +193,7 @@ applicationsRouter.post(
             resumeSummary = pyData.extracted_text_preview
           }
         } else {
-          console.error('Python API returned error:', await pyRes.text())
+          console.error('Node API returned error:', await pyRes.text())
         }
       } catch (err) {
         console.error('Failed to call Resume Parser API:', err)
@@ -378,6 +378,11 @@ applicationsRouter.post('/:id/assessment/start', requireRole('job_seeker'), asyn
       where: { applicationId: id, type: 'aptitude' },
     })
 
+    if (attempt && attempt.submittedAt) {
+      res.status(403).json({ message: 'Aptitude assessment already submitted' })
+      return
+    }
+
     if (!attempt) {
       const verbal = APTITUDE_POOL.filter(q => q.category === 'Verbal').sort(() => 0.5 - Math.random()).slice(0, 3)
       const quant = APTITUDE_POOL.filter(q => q.category === 'Quantitative').sort(() => 0.5 - Math.random()).slice(0, 4)
@@ -426,6 +431,10 @@ applicationsRouter.post('/:id/assessment/submit', requireRole('job_seeker'), asy
     })
     if (!attempt) {
       res.status(404).json({ message: 'Assessment not found' })
+      return
+    }
+    if (attempt.submittedAt) {
+      res.status(403).json({ message: 'Aptitude assessment already submitted' })
       return
     }
     const data = JSON.parse(attempt.answers as string)
@@ -483,6 +492,11 @@ applicationsRouter.post(
       let attempt = await prisma.screeningAttempt.findFirst({
         where: { applicationId: id },
       })
+
+      if (attempt && attempt.submittedAt) {
+        res.status(403).json({ message: 'Screening assessment already submitted' })
+        return
+      }
 
       if (!attempt) {
         // Generate new questions
@@ -793,6 +807,11 @@ applicationsRouter.post('/:id/coding-assessment/start', requireRole('job_seeker'
       where: { applicationId: id, type: 'coding' },
     })
 
+    if (attempt && attempt.submittedAt) {
+      res.status(403).json({ message: 'Coding assessment already submitted' })
+      return
+    }
+
     if (!attempt) {
       // Pick 2 random from CODING_POOL
       const shuffled = CODING_POOL.sort(() => 0.5 - Math.random())
@@ -844,6 +863,10 @@ applicationsRouter.post('/:id/coding-assessment/submit', requireRole('job_seeker
     })
     if (!attempt) {
       res.status(404).json({ message: 'Assessment not found' })
+      return
+    }
+    if (attempt.submittedAt) {
+      res.status(403).json({ message: 'Coding assessment already submitted' })
       return
     }
     const data = JSON.parse(attempt.answers as string)
