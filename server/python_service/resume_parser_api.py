@@ -60,16 +60,8 @@ def parse_resume():
     resume = request.files["resume"]
     jd_text = request.form.get("job_description", "")
 
-    print(f"DEBUG: Received Resume: {resume.filename}")
-    print(f"DEBUG: Job Description Length: {len(jd_text)}")
-    print(f"DEBUG: Job Description Snippet: {jd_text[:50]}...")
-
     resume_text = extract_text(resume)
-    print(f"DEBUG: Extracted Text Length: {len(resume_text)}")
-    print(f"DEBUG: Extracted Text Snippet: {resume_text[:50]}...")
-    
     score = calculate_score(resume_text, jd_text)
-    print(f"DEBUG: Calculated Score: {score}")
 
     return jsonify({
         "resume_score": score,

@@ -180,8 +180,8 @@ applicationsRouter.post(
         formData.append('resume', blob, file.originalname)
         formData.append('job_description', app.job?.description || '')
 
-        console.log('DEBUG: Sending to Node API...')
-        const pyRes = await fetch('http://localhost:3001/api/parse-resume', {
+        console.log('DEBUG: Sending to Python API...')
+        const pyRes = await fetch('http://localhost:5001/parse-resume', {
           method: 'POST',
           body: formData
         })
@@ -193,7 +193,7 @@ applicationsRouter.post(
             resumeSummary = pyData.extracted_text_preview
           }
         } else {
-          console.error('Node API returned error:', await pyRes.text())
+          console.error('Python API returned error:', await pyRes.text())
         }
       } catch (err) {
         console.error('Failed to call Resume Parser API:', err)
