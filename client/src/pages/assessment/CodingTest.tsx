@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import Editor from '@monaco-editor/react'
 import { Clock, Play, CheckCircle, AlertCircle } from 'lucide-react'
 import { applicationsApi } from '@/api/applications'
+import { useProctoring } from '@/hooks/useProctoring'
 
 export function CodingTest() {
     const { applicationId } = useParams<{ applicationId: string }>()
@@ -16,6 +17,12 @@ export function CodingTest() {
     const [submitError, setSubmitError] = useState('')
     const [running, setRunning] = useState(false)
     const [language, setLanguage] = useState('javascript')
+
+    const { ProctoringView } = useProctoring(applicationId, () => {
+        setSubmitError('Terminated from hiring process due to multiple tab switches.');
+        setSubmitted(true);
+        setTimeout(() => navigate('/seeker/dashboard'), 3000);
+    });
 
     const { data: config, isLoading, error } = useQuery({
         queryKey: ['coding', applicationId],
@@ -147,6 +154,17 @@ export function CodingTest() {
                 </div>
                 <h2 className="text-2xl font-bold text-white">Test Submitted!</h2>
                 <p className="text-slate-400">You will be redirected shortly...</p>
+            </div>
+        )
+    }
+
+    if (submitted && submitError) {
+        return (
+            <div className="flex h-[calc(100vh-4rem)] items-center justify-center flex-col gap-4 bg-slate-950">
+                <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
+                    <h2 className="text-xl font-bold text-red-500 mb-4">Terminated</h2>
+                    <p className="text-slate-300">{submitError}</p>
+                </div>
             </div>
         )
     }
@@ -304,6 +322,7 @@ export function CodingTest() {
                     </div>
                 </div>
             </div>
+            <ProctoringView />
         </div>
     )
 }

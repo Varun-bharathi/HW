@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { CountdownTimer } from '@/components/assessment/CountdownTimer'
 import { applicationsApi } from '@/api/applications'
+import { useProctoring } from '@/hooks/useProctoring'
 
 interface McqOption {
     id: string
@@ -51,6 +52,12 @@ export function AptitudeTest() {
     const [answers, setAnswers] = useState<Record<string, number>>({})
     const [submitted, setSubmitted] = useState(false)
     const [submitError, setSubmitError] = useState('')
+
+    const { ProctoringView } = useProctoring(applicationId, () => {
+        setSubmitError('Terminated from hiring process due to multiple tab switches.');
+        setSubmitted(true);
+        setTimeout(() => navigate('/seeker/dashboard'), 3000);
+    });
 
     const { data: config, isLoading, error } = useQuery({
         queryKey: ['aptitude', applicationId],
@@ -116,15 +123,13 @@ export function AptitudeTest() {
                 <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
                     <h2 className="text-xl font-bold text-white">Test Submitted</h2>
                     <p className="mt-2 text-slate-400">
-                        Your responses have been recorded. The recruiter will be notified.
+                        {submitError ? submitError : 'Your responses have been recorded. The recruiter will be notified.'}
                     </p>
                     <p className="mt-4 text-sm text-slate-500">Redirecting to dashboard…</p>
                 </div>
             </div>
         )
-    }
-
-    return (
+    } return (
         <div className="min-h-screen bg-slate-950">
             <header className="border-b border-slate-800 bg-slate-900/50 sticky top-0 z-10">
                 <div className="max-w-[95vw] mx-auto px-4 py-3 flex items-center justify-between">
@@ -149,10 +154,10 @@ export function AptitudeTest() {
                                 key={i}
                                 onClick={() => setCurrentIndex(i)}
                                 className={`h-8 rounded text-sm font-medium transition-colors ${i === currentIndex
-                                        ? 'bg-brand-500 text-white'
-                                        : answers[i] !== undefined
-                                            ? 'bg-emerald-500/20 text-emerald-400'
-                                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                    ? 'bg-brand-500 text-white'
+                                    : answers[i] !== undefined
+                                        ? 'bg-emerald-500/20 text-emerald-400'
+                                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                     }`}
                             >
                                 {i + 1}
@@ -206,6 +211,7 @@ export function AptitudeTest() {
                     </div>
                 </div>
             </div>
+            <ProctoringView />
         </div>
     )
 }

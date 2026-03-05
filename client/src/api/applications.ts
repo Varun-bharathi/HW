@@ -40,4 +40,10 @@ export const applicationsApi = {
     api.post<{ message: string }>(`/applications/${id}/coding-assessment/submit`, { answers, language }),
   runCodeWithDetails: (id: string, payload: { questionId: string; code: string; language: string; type?: string }) =>
     api.post<{ results: { input: string; expected: string; output: string; passed: boolean }[] }>(`/applications/${id}/screening/run-code`, payload),
+
+  // Proctoring
+  sendProctoringImage: (id: string, imageBase64: string) =>
+    api.post<{ message: string }>(`/applications/${id}/proctoring/image`, { image: imageBase64 }),
+  reportProctoringViolation: (id: string, reason: string) =>
+    api.post<{ message: string }>(`/applications/${id}/proctoring/violation`, { reason }),
 }

@@ -955,3 +955,42 @@ applicationsRouter.post('/:id/coding-assessment/submit', requireRole('job_seeker
     res.status(500).json({ message: 'Failed to submit' })
   }
 })
+
+applicationsRouter.post('/:id/proctoring/image', requireRole('job_seeker'), async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+    const { image } = req.body;
+    if (!image) { return res.status(400).json({ message: 'Image required' }); }
+
+    const proctoringDir = path.join(process.cwd(), 'uploads', 'proctoring');
+    fs.mkdirSync(proctoringDir, { recursive: true });
+
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, 'base64');
+    const filename = `proctoring_${id}_${Date.now()}.jpg`;
+
+    fs.writeFileSync(path.join(proctoringDir, filename), buffer);
+    res.json({ message: 'Proctoring image recorded' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Failed to record proctoring image' });
+  }
+});
+
+applicationsRouter.post('/:id/proctoring/violation', requireRole('job_seeker'), async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    await prisma.application.update({
+      where: { id },
+      data: { status: 'rejected' }
+    });
+
+    console.warn(`Proctoring violation for application ${id}: ${reason}`);
+    res.json({ message: 'Violation recorded' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Failed to record violation' });
+  }
+});

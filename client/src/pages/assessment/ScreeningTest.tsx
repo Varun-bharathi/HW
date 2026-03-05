@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { CountdownTimer } from '@/components/assessment/CountdownTimer'
 import { CodeEditor } from '@/components/assessment/CodeEditor'
 import { screeningApi } from '@/api/screening'
+import { useProctoring } from '@/hooks/useProctoring'
 
 interface McqOption {
   id: string
@@ -58,6 +59,12 @@ export function ScreeningTest() {
   const [activeCaseIndex, setActiveCaseIndex] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
   const startTimeRef = useRef<number>(Date.now())
+
+  const { ProctoringView } = useProctoring(applicationId, () => {
+    setSubmitError('Terminated from hiring process due to multiple tab switches.');
+    setSubmitted(true);
+    setTimeout(() => navigate('/seeker/dashboard'), 3000);
+  });
 
   const { data: config, isLoading, error } = useQuery({
     queryKey: ['screening', applicationId],
@@ -448,6 +455,7 @@ export function ScreeningTest() {
           </div>
         </main>
       </div>
+      <ProctoringView />
     </div>
   )
 }
