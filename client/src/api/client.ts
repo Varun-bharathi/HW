@@ -18,6 +18,9 @@ async function request<T>(
     const err = await res.json().catch(() => ({}))
     throw new Error((err as { message?: string }).message ?? `HTTP ${res.status}`)
   }
+  if (res.status === 204) {
+    return {} as T
+  }
   return res.json() as Promise<T>
 }
 

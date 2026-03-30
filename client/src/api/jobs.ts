@@ -46,6 +46,7 @@ export const jobsApi = {
   get: (id: string) => api.get<JobDetail>(`/jobs/${id}`),
   create: (body: Record<string, unknown>) => api.post<JobDetail>('/jobs', body),
   update: (id: string, body: Record<string, unknown>) => api.patch<JobDetail>(`/jobs/${id}`, body),
+  delete: (id: string) => api.delete<{ message: string }>(`/jobs/${id}`),
   publish: (id: string) => api.post<JobDetail>(`/jobs/${id}/publish`),
   applications: (jobId: string) => api.get<ApplicationListItem[]>(`/jobs/${jobId}/applications`),
   apply: (jobId: string) => api.post<ApplyResponse>(`/jobs/${jobId}/apply`),
