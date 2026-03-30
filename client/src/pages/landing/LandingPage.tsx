@@ -16,7 +16,7 @@ export function LandingPage() {
             </Link>
             <Link
               to="/auth/recruiter/login"
-              className="text-slate-400 hover:text-white text-sm font-medium"
+              className="px-4 py-2 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-colors"
             >
               Recruiter
             </Link>
@@ -44,7 +44,7 @@ export function LandingPage() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/auth/recruiter/register"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors border border-slate-700"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-colors"
             >
               <Briefcase className="w-5 h-5" />
               Sign up as Recruiter
