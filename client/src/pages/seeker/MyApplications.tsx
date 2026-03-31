@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileCheck, ExternalLink, Upload, Code } from 'lucide-react'
+import { FileCheck, ExternalLink, UploadCloud, Code, Video } from 'lucide-react'
 import { applicationsApi } from '@/api/applications'
 import type { ApplicationListItem } from '@/api/jobs'
 
@@ -17,7 +17,7 @@ const statusLabels: Record<string, string> = {
   coding_sent: 'Coding Test Pending',
   coding_completed: 'Coding done',
   passed_coding: 'Passed Coding Test',
-  interview_scheduled: 'Interview',
+  interview_scheduled: 'HR Interview Ready',
   accepted: 'Accepted',
   rejected: 'Rejected',
 }
@@ -105,11 +105,27 @@ export function MyApplications() {
                       type="button"
                       onClick={() => handleUploadClick(app)}
                       disabled={uploadMu.isPending}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 text-sm font-medium disabled:opacity-50"
+                      title={uploadingId === app.id ? 'Uploading…' : 'Upload your resume'}
+                      className="group relative inline-flex flex-col items-center gap-1 px-4 py-2.5 rounded-xl border-2 border-dashed border-emerald-500/50 bg-emerald-500/10 text-emerald-400 hover:border-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Upload className="w-4 h-4" />
-                      {uploadingId === app.id ? 'Uploading…' : 'Upload resume'}
+                      {uploadingId === app.id ? (
+                        <span className="w-5 h-5 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
+                      ) : (
+                        <UploadCloud className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      )}
+                      <span className="text-xs font-medium">
+                        {uploadingId === app.id ? 'Uploading…' : 'Upload Resume'}
+                      </span>
                     </button>
+                  )}
+                  {app.status === 'interview_scheduled' && (
+                    <Link
+                      to={`/interview/lobby/${app.id}`}
+                      className="group inline-flex flex-col items-center gap-1 px-4 py-2.5 rounded-xl border-2 border-brand-500/50 bg-brand-500/10 text-brand-400 hover:border-brand-400 hover:bg-brand-500/20 transition-all duration-200"
+                    >
+                      <Video className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
+                      <span className="text-xs font-medium">Join HR Interview</span>
+                    </Link>
                   )}
                   {app.status === 'assessment_sent' && (
                     <Link

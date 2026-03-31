@@ -46,4 +46,10 @@ export const applicationsApi = {
     api.post<{ message: string }>(`/applications/${id}/proctoring/image`, { image: imageBase64 }),
   reportProctoringViolation: (id: string, reason: string) =>
     api.post<{ message: string }>(`/applications/${id}/proctoring/violation`, { reason }),
+
+  // HR Interview Lobby
+  joinInterviewLobby: (id: string) => api.post<{ message: string; roomId: string }>(`/applications/${id}/interview/join`, {}),
+  getInterviewStatus: (id: string) => api.get<{ inLobby: boolean; admitted: boolean; roomId: string | null; ended: boolean }>(`/applications/${id}/interview/status`),
+  admitCandidate: (id: string) => api.patch<{ message: string; roomId: string }>(`/applications/${id}/interview/admit`),
+  endInterview: (id: string) => api.patch<{ message: string }>(`/applications/${id}/interview/end`),
 }

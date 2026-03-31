@@ -994,3 +994,89 @@ applicationsRouter.post('/:id/proctoring/violation', requireRole('job_seeker'), 
     res.status(500).json({ message: 'Failed to record violation' });
   }
 });
+
+// ─── HR Interview Lobby (in-memory, per-process) ────────────────────────────
+// State: { inLobby: boolean; admitted: boolean; roomId: string; endedAt?: number }
+const interviewLobby = new Map<string, { inLobby: boolean; admitted: boolean; roomId: string; endedAt?: number }>()
+
+// Seeker: enter lobby
+applicationsRouter.post('/:id/interview/join', requireRole('job_seeker'), async (req: AuthRequest, res) => {
+  try {
+    const u = req.user!
+    const { id } = req.params
+    const app = await prisma.application.findUnique({ where: { id } })
+    if (!app || app.jobSeekerId !== u.userId) {
+      res.status(404).json({ message: 'Application not found' })
+      return
+    }
+    if (app.status !== 'interview_scheduled') {
+      res.status(400).json({ message: 'Interview not scheduled for this application' })
+      return
+    }
+    const existing = interviewLobby.get(id)
+    if (!existing) {
+      const roomId = `hr-${id}-${Date.now()}`
+      interviewLobby.set(id, { inLobby: true, admitted: false, roomId })
+    } else {
+      interviewLobby.set(id, { ...existing, inLobby: true, admitted: existing.admitted })
+    }
+    res.json({ message: 'Joined lobby', roomId: interviewLobby.get(id)!.roomId })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ message: 'Failed to join lobby' })
+  }
+})
+
+// Seeker / Recruiter: poll lobby status
+applicationsRouter.get('/:id/interview/status', async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params
+    const state = interviewLobby.get(id)
+    if (!state) {
+      res.json({ inLobby: false, admitted: false, roomId: null, ended: false })
+      return
+    }
+    res.json({ inLobby: state.inLobby, admitted: state.admitted, roomId: state.roomId, ended: !!state.endedAt })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ message: 'Failed to get interview status' })
+  }
+})
+
+// Recruiter: admit seeker into the room
+applicationsRouter.patch('/:id/interview/admit', requireRole('recruiter'), async (req: AuthRequest, res) => {
+  try {
+    const u = req.user!
+    const { id } = req.params
+    const app = await prisma.application.findUnique({
+      where: { id },
+      include: { job: { select: { recruiterId: true } } },
+    })
+    if (!app || app.job?.recruiterId !== u.userId) {
+      res.status(404).json({ message: 'Application not found' })
+      return
+    }
+    const existing = interviewLobby.get(id)
+    const roomId = existing?.roomId ?? `hr-${id}-${Date.now()}`
+    interviewLobby.set(id, { inLobby: true, admitted: true, roomId })
+    res.json({ message: 'Candidate admitted', roomId })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ message: 'Failed to admit candidate' })
+  }
+})
+
+// Either: end interview
+applicationsRouter.patch('/:id/interview/end', async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params
+    const existing = interviewLobby.get(id)
+    if (existing) {
+      interviewLobby.set(id, { ...existing, inLobby: false, admitted: false, endedAt: Date.now() })
+    }
+    res.json({ message: 'Interview ended' })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ message: 'Failed to end interview' })
+  }
+})

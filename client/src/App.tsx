@@ -26,6 +26,9 @@ import { AptitudeTest } from './pages/assessment/AptitudeTest'
 import { CodingTest } from './pages/assessment/CodingTest'
 import { AssessmentView } from './pages/assessment/AssessmentView'
 
+import { InterviewLobby } from './pages/interview/InterviewLobby'
+import { InterviewRoom } from './pages/interview/InterviewRoom'
+
 import { MessagingInbox } from './pages/messaging/MessagingInbox'
 import { ForumView } from './pages/forum/ForumView'
 
@@ -83,6 +86,10 @@ function App() {
       <Route path="/assessment/aptitude/:applicationId" element={<AptitudeTest />} />
       <Route path="/assessment/coding/:applicationId" element={<CodingTest />} />
       <Route path="/assessment/:assessmentId" element={<AssessmentView />} />
+
+      {/* HR Interview */}
+      <Route path="/interview/lobby/:applicationId" element={<AuthGuard><InterviewLobby /></AuthGuard>} />
+      <Route path="/interview/room/:applicationId" element={<AuthGuard><InterviewRoom /></AuthGuard>} />
 
       {/* Shared */}
       <Route path="/messages" element={<AuthGuard><MessagingInbox /></AuthGuard>} />

@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronUp, ChevronDown, User, Check, X, Code, FileCheck, Calendar } from 'lucide-react'
+import { ChevronUp, ChevronDown, User, Check, X, Code, FileCheck, Calendar, UserCheck } from 'lucide-react'
 import { jobsApi, type ApplicationListItem } from '@/api/jobs'
 import { applicationsApi } from '@/api/applications'
 import { CandidateDetailModal } from '@/components/recruiter/CandidateDetailModal'
@@ -85,6 +85,44 @@ export function JobApplicants() {
     dir: 'desc',
   })
   const [selected, setSelected] = useState<ApplicationListItem | null>(null)
+  const navigate = useNavigate()
+
+  // Track lobby status for interview_scheduled applications
+  const [lobbyStatus, setLobbyStatus] = useState<Record<string, { inLobby: boolean; admitted: boolean; roomId: string | null }>>({}
+  )
+
+  const interviewApps = useMemo(
+    () => applications.filter((a) => a.status === 'interview_scheduled'),
+    [applications]
+  )
+
+  useEffect(() => {
+    if (interviewApps.length === 0) return
+    const poll = async () => {
+      const results = await Promise.allSettled(
+        interviewApps.map((a) => applicationsApi.getInterviewStatus(a.id))
+      )
+      const next: typeof lobbyStatus = {}
+      interviewApps.forEach((a, i) => {
+        const r = results[i]
+        if (r.status === 'fulfilled') {
+          next[a.id] = { inLobby: r.value.inLobby, admitted: r.value.admitted, roomId: r.value.roomId }
+        }
+      })
+      setLobbyStatus(next)
+    }
+    poll()
+    const t = setInterval(poll, 3000)
+    return () => clearInterval(t)
+  }, [interviewApps])
+
+  const admitMu = useMutation({
+    mutationFn: (appId: string) => applicationsApi.admitCandidate(appId),
+    onSuccess: (data, appId) => {
+      const candidateName = applications.find((a) => a.id === appId)?.job_seeker?.full_name ?? ''
+      navigate(`/interview/room/${appId}`, { state: { roomId: data.roomId, role: 'recruiter', candidateName } })
+    },
+  })
 
   const sorted = useMemo(() => {
     const list = [...applications]
@@ -310,6 +348,25 @@ export function JobApplicants() {
                         <Code className="w-4 h-4" />
                       </button>
                     )}
+
+                    {app.status === 'interview_scheduled' && (() => {
+                        const ls = lobbyStatus[app.id]
+                        const waiting = ls?.inLobby && !ls?.admitted
+                        return (
+                          <button
+                            onClick={() => admitMu.mutate(app.id)}
+                            disabled={admitMu.isPending}
+                            className="relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 text-xs font-medium disabled:opacity-50 transition-colors"
+                            title="Admit candidate & join interview"
+                          >
+                            {waiting && (
+                              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                            )}
+                            <UserCheck className="w-3.5 h-3.5" />
+                            {waiting ? 'Admit (waiting)' : 'Start Interview'}
+                          </button>
+                        )
+                      })()}
 
                     {app.status !== 'accepted' &&
                       app.status !== 'rejected' &&
