@@ -1,6 +1,6 @@
 import type { User, UserRole } from '@/types'
 
-const BASE = ''
+const BASE = import.meta.env.VITE_API_URL || '/api'
 
 export interface LoginPayload {
   email: string
@@ -37,21 +37,21 @@ async function fetchJson<T>(path: string, options: RequestInit = {}): Promise<T>
 }
 
 export async function login(p: LoginPayload): Promise<AuthResponse> {
-  return fetchJson<AuthResponse>('/api/auth/login', {
+  return fetchJson<AuthResponse>('/auth/login', {
     method: 'POST',
     body: JSON.stringify(p),
   })
 }
 
 export async function registerRecruiter(p: RegisterRecruiterPayload): Promise<AuthResponse> {
-  return fetchJson<AuthResponse>('/api/auth/register/recruiter', {
+  return fetchJson<AuthResponse>('/auth/register/recruiter', {
     method: 'POST',
     body: JSON.stringify(p),
   })
 }
 
 export async function registerJobSeeker(p: RegisterSeekerPayload): Promise<AuthResponse> {
-  return fetchJson<AuthResponse>('/api/auth/register/job-seeker', {
+  return fetchJson<AuthResponse>('/auth/register/job-seeker', {
     method: 'POST',
     body: JSON.stringify(p),
   })

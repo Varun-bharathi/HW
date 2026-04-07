@@ -216,3 +216,4 @@ PORT=4000
 - **Interview video** — the room shows your local camera preview. Full peer-to-peer video (seeker ↔ recruiter) requires a WebRTC signaling server (Socket.io + STUN/TURN). The lobby → admit flow is fully functional.
 - **SQLite** is used for local dev. For production, update `DATABASE_URL` to a Postgres connection string and run `npx prisma migrate deploy`.
 - **Uploaded files** are stored under `server/uploads/`. In production, replace with S3 or equivalent object storage.
+            

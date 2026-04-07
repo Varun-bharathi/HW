@@ -2,7 +2,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { api } from './client'
 import type { ApplicationListItem } from './jobs'
 
-const BASE = '/api'
+const BASE = import.meta.env.VITE_API_URL || '/api'
 
 async function uploadResumeRequest(applicationId: string, file: File): Promise<ApplicationListItem> {
   const { token } = useAuthStore.getState()
