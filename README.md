@@ -1,4 +1,4 @@
-# HireFlow — AI-Powered Hiring Platform
+# HireEngine — AI-Powered Hiring Platform
 
 Full-stack hiring platform for **Recruiters** (job posting, AI screening, candidate ranking) and **Job Seekers** (profile, job discovery, assessments, and live HR interviews).
 
@@ -35,8 +35,8 @@ npm run dev                 # http://localhost:4000
 
 | Role | Email | Password |
 |------|-------|----------|
-| Recruiter | `recruiter@hireflow.demo` | `password123` |
-| Job Seeker | `seeker@hireflow.demo` | `password123` |
+| Recruiter | `recruiter@HireEngine.demo` | `password123` |
+| Job Seeker | `seeker@HireEngine.demo` | `password123` |
 
 ### 2. Client (React SPA)
 

@@ -91,7 +91,7 @@ export function JobPostingEdit() {
   if (!id) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">Invalid job.</p>
+        <p className="text-slate-600">Invalid job.</p>
         <Link to="/recruiter/dashboard" className="mt-2 inline-block text-brand-400 hover:underline">
           Back to dashboard
         </Link>
@@ -101,7 +101,7 @@ export function JobPostingEdit() {
   if (isLoading || !job) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">{isLoading ? 'Loading…' : error ? 'Job not found.' : 'Job not found.'}</p>
+        <p className="text-slate-600">{isLoading ? 'Loading…' : error ? 'Job not found.' : 'Job not found.'}</p>
         <Link to="/recruiter/dashboard" className="mt-2 inline-block text-brand-400 hover:underline">
           Back to dashboard
         </Link>
@@ -114,13 +114,13 @@ export function JobPostingEdit() {
       <div className="flex items-center gap-4">
         <Link
           to="/recruiter/dashboard"
-          className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-950 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Edit job</h1>
-          <p className="mt-1 text-slate-400">{job.title}</p>
+          <h1 className="text-2xl font-bold text-slate-950">Edit job</h1>
+          <p className="mt-1 text-slate-600">{job.title}</p>
         </div>
       </div>
 
@@ -132,48 +132,48 @@ export function JobPostingEdit() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Job title *</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Job title *</label>
           <input
             type="text"
             value={form.title}
             onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
             placeholder="e.g. Senior Frontend Engineer"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Job description *</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Job description *</label>
           <textarea
             value={form.description}
             onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[180px]"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[180px]"
             placeholder="Describe the role, responsibilities, and requirements..."
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
             Required skills (comma- or semicolon-separated) *
           </label>
           <input
             type="text"
             value={form.skills}
             onChange={(e) => setForm((p) => ({ ...p, skills: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
             placeholder="e.g. React, TypeScript, Node.js"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Experience level</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Experience level</label>
             <select
               value={form.experience_level}
               onChange={(e) => setForm((p) => ({ ...p, experience_level: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               {experienceLevels.map((l) => (
                 <option key={l} value={l}>
@@ -183,11 +183,11 @@ export function JobPostingEdit() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Employment type</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Employment type</label>
             <select
               value={form.employment_type}
               onChange={(e) => setForm((p) => ({ ...p, employment_type: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               {employmentTypes.map((t) => (
                 <option key={t} value={t}>
@@ -199,18 +199,18 @@ export function JobPostingEdit() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Location</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
           <input
             type="text"
             value={form.location}
             onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
             placeholder="e.g. Remote, New York NY"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
             Preliminary screening cutoff (0–100)
           </label>
           <input
@@ -224,7 +224,7 @@ export function JobPostingEdit() {
                 cutoff_score: Math.min(100, Math.max(0, +e.target.value)),
               }))
             }
-            className="w-full max-w-[120px] px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full max-w-[120px] px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
 
@@ -232,7 +232,7 @@ export function JobPostingEdit() {
           <button
             type="submit"
             disabled={saving || updateMu.isPending}
-            className="px-6 py-3 rounded-lg bg-brand-500 text-white font-medium hover:bg-brand-600 disabled:opacity-50 transition-colors"
+            className="px-6 py-3 rounded-lg bg-brand-500 text-slate-950 font-medium hover:bg-brand-600 disabled:opacity-50 transition-colors"
           >
             {updateMu.isPending || saving ? 'Saving…' : 'Save changes'}
           </button>
@@ -241,7 +241,7 @@ export function JobPostingEdit() {
               type="button"
               onClick={() => publishMu.mutate()}
               disabled={publishMu.isPending}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-500 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 text-slate-950 font-medium hover:bg-emerald-500 disabled:opacity-50 transition-colors"
             >
               <Send className="w-4 h-4" />
               {publishMu.isPending ? 'Publishing…' : 'Publish (go live)'}
@@ -251,7 +251,7 @@ export function JobPostingEdit() {
             type="button"
             onClick={() => genQuestionsMu.mutate()}
             disabled={genQuestionsMu.isPending}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-slate-100 text-slate-700 font-medium hover:bg-slate-700 disabled:opacity-50 transition-colors"
           >
             <Sparkles className="w-4 h-4" />
             {genQuestionsMu.isPending ? 'Generating…' : 'Generate screening questions'}
@@ -263,14 +263,14 @@ export function JobPostingEdit() {
           )}
           <Link
             to={`/recruiter/jobs/${id}/applicants`}
-            className="px-6 py-3 rounded-lg bg-slate-700 text-slate-300 font-medium hover:bg-slate-600 transition-colors"
+            className="px-6 py-3 rounded-lg bg-slate-700 text-slate-700 font-medium hover:bg-slate-600 transition-colors"
           >
             View applicants
           </Link>
           <button
             type="button"
             onClick={() => navigate('/recruiter/dashboard')}
-            className="px-6 py-3 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-300 transition-colors"
+            className="px-6 py-3 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-700 hover:text-slate-700 transition-colors"
           >
             Back to dashboard
           </button>

@@ -14,7 +14,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      
+
       token: null,
       user: null,
       role: null,
@@ -36,6 +36,6 @@ export const useAuthStore = create<AuthState>()(
           role: user.role,
         }),
     }),
-    { name: 'hireflow-auth' }
+    { name: 'HireEngine-auth' }
   )
 )

@@ -1,4 +1,4 @@
-# HireFlow API
+# HireEngine API
 
 Express + Prisma + SQLite backend for the hiring platform.
 
@@ -31,8 +31,8 @@ API runs at **http://localhost:4000**. The React app (port 3000) proxies `/api` 
 
 ## Seed users
 
-- **Recruiter:** `recruiter@hireflow.demo` / `password123`
-- **Job seeker:** `seeker@hireflow.demo` / `password123`
+- **Recruiter:** `recruiter@HireEngine.demo` / `password123`
+- **Job seeker:** `seeker@HireEngine.demo` / `password123`
 
 ## Endpoints
 

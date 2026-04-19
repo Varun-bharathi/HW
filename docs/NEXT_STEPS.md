@@ -1,4 +1,4 @@
-# HireFlow — Next Steps
+# HireEngine — Next Steps
 
 Actionable roadmap to move from the current React + mock setup to a production-ready full-stack platform.
 
@@ -13,7 +13,7 @@ Actionable roadmap to move from the current React + mock setup to a production-r
    npm install
    npx prisma generate
    npx prisma db push     # create tables
-   npm run db:seed        # demo users: recruiter@hireflow.demo / seeker@hireflow.demo — password: password123
+   npm run db:seed        # demo users: recruiter@HireEngine.demo / seeker@HireEngine.demo — password: password123
    npm run dev            # API at http://localhost:4000
    ```
 

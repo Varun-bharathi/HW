@@ -27,7 +27,7 @@ function McqOptions({
                     key={opt.id}
                     className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${selected === idx
                         ? 'border-brand-500 bg-brand-500/10'
-                        : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+                        : 'border-slate-300 hover:border-slate-600 bg-slate-100/50'
                         }`}
                 >
                     <input
@@ -98,17 +98,17 @@ export function AptitudeTest() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-                <div className="text-center text-slate-400">Loading aptitude test…</div>
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-center text-slate-600">Loading aptitude test…</div>
             </div>
         )
     }
 
     if (error || !config) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-white flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-slate-400">Could not load test. Maybe already completed or invalid.</p>
+                    <p className="text-slate-600">Could not load test. Maybe already completed or invalid.</p>
                     <Link to="/seeker/applications" className="mt-2 inline-block text-emerald-400 hover:underline">
                         Back to applications
                     </Link>
@@ -119,10 +119,10 @@ export function AptitudeTest() {
 
     if (submitted && !submitError) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
-                    <h2 className="text-xl font-bold text-white">Test Submitted</h2>
-                    <p className="mt-2 text-slate-400">
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center max-w-md">
+                    <h2 className="text-xl font-bold text-slate-950">Test Submitted</h2>
+                    <p className="mt-2 text-slate-600">
                         {submitError ? submitError : 'Your responses have been recorded. The recruiter will be notified.'}
                     </p>
                     <p className="mt-4 text-sm text-slate-500">Redirecting to dashboard…</p>
@@ -130,12 +130,12 @@ export function AptitudeTest() {
             </div>
         )
     } return (
-        <div className="min-h-screen bg-slate-950">
-            <header className="border-b border-slate-800 bg-slate-900/50 sticky top-0 z-10">
+        <div className="min-h-screen bg-white">
+            <header className="border-b border-slate-200 bg-slate-50/50 sticky top-0 z-10">
                 <div className="max-w-[95vw] mx-auto px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <span className="font-semibold text-white">Aptitude Assessment</span>
-                        <span className="text-slate-400 text-sm">{questions.length} Questions</span>
+                        <span className="font-semibold text-slate-950">Aptitude Assessment</span>
+                        <span className="text-slate-600 text-sm">{questions.length} Questions</span>
                     </div>
                     <CountdownTimer
                         durationMinutes={durationMinutes}
@@ -154,10 +154,10 @@ export function AptitudeTest() {
                                 key={i}
                                 onClick={() => setCurrentIndex(i)}
                                 className={`h-8 rounded text-sm font-medium transition-colors ${i === currentIndex
-                                    ? 'bg-brand-500 text-white'
+                                    ? 'bg-brand-500 text-slate-950'
                                     : answers[i] !== undefined
                                         ? 'bg-emerald-500/20 text-emerald-400'
-                                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-700'
                                     }`}
                             >
                                 {i + 1}
@@ -167,7 +167,7 @@ export function AptitudeTest() {
 
                     <button
                         onClick={() => submitTest()}
-                        className="w-full mt-6 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 font-medium"
+                        className="w-full mt-6 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-600 font-medium"
                     >
                         Submit Test
                     </button>
@@ -176,7 +176,7 @@ export function AptitudeTest() {
                 {/* Main */}
                 <div className="flex-1">
                     {current && (
-                        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+                        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <span className="text-xs font-bold text-brand-400 bg-brand-400/10 px-2 py-0.5 rounded">
                                     {current.category ?? 'Aptitude'}
@@ -197,14 +197,14 @@ export function AptitudeTest() {
                         <button
                             onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
                             disabled={currentIndex === 0}
-                            className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 disabled:opacity-50"
+                            className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 disabled:opacity-50"
                         >
                             Previous
                         </button>
                         <button
                             onClick={() => setCurrentIndex(Math.min(questions.length - 1, currentIndex + 1))}
                             disabled={currentIndex === questions.length - 1}
-                            className="px-4 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 disabled:opacity-50"
+                            className="px-4 py-2 rounded-lg bg-slate-100 text-slate-950 hover:bg-slate-700 disabled:opacity-50"
                         >
                             Next
                         </button>

@@ -158,7 +158,7 @@ export function JobApplicants() {
   if (!id) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">Invalid job.</p>
+        <p className="text-slate-600">Invalid job.</p>
         <Link to="/recruiter/dashboard" className="mt-2 inline-block text-brand-400 hover:underline">
           Back to dashboard
         </Link>
@@ -168,7 +168,7 @@ export function JobApplicants() {
   if (jobLoading || !job) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">{jobLoading ? 'Loading…' : 'Job not found.'}</p>
+        <p className="text-slate-600">{jobLoading ? 'Loading…' : 'Job not found.'}</p>
         <Link to="/recruiter/dashboard" className="mt-2 inline-block text-brand-400 hover:underline">
           Back to dashboard
         </Link>
@@ -182,21 +182,21 @@ export function JobApplicants() {
         <div>
           <Link
             to="/recruiter/dashboard"
-            className="text-sm text-slate-400 hover:text-white mb-1 inline-block"
+            className="text-sm text-slate-600 hover:text-slate-950 mb-1 inline-block"
           >
             ← Dashboard
           </Link>
-          <h1 className="text-2xl font-bold text-white">Applicants · {job.title}</h1>
-          <p className="mt-1 text-slate-400">
+          <h1 className="text-2xl font-bold text-slate-950">Applicants · {job.title}</h1>
+          <p className="mt-1 text-slate-600">
             Test scores, status. View profile, send assessment, accept/reject.
           </p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+      <div className="rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-slate-800">
+            <tr className="border-b border-slate-200">
               <th
                 className="text-left py-3 px-4 sortable-th"
                 onClick={() => toggleSort('name')}
@@ -258,19 +258,19 @@ export function JobApplicants() {
                     ))}
                 </span>
               </th>
-              <th className="text-right py-3 px-4 text-slate-400 font-medium">Actions</th>
+              <th className="text-right py-3 px-4 text-slate-600 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((app) => (
               <tr
                 key={app.id}
-                className="border-b border-slate-800/80 hover:bg-slate-800/30 transition-colors"
+                className="border-b border-slate-200/80 hover:bg-slate-100/30 transition-colors"
               >
                 <td className="py-3 px-4">
                   <button
                     onClick={() => setSelected(app)}
-                    className="flex items-center gap-2 text-left font-medium text-white hover:text-brand-400"
+                    className="flex items-center gap-2 text-left font-medium text-slate-950 hover:text-brand-400"
                   >
                     <User className="w-4 h-4 text-slate-500" />
                     {app.job_seeker?.full_name ?? '—'}
@@ -308,7 +308,7 @@ export function JobApplicants() {
                         ? 'bg-red-500/20 text-red-400'
                         : app.status === 'shortlisted'
                           ? 'bg-amber-500/20 text-amber-400'
-                          : 'bg-slate-600/50 text-slate-400'
+                          : 'bg-slate-600/50 text-slate-600'
                       }`}
                   >
                     {statusLabels[app.status] ?? app.status}
@@ -318,7 +318,7 @@ export function JobApplicants() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => setSelected(app)}
-                      className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-white"
+                      className="p-2 rounded-lg text-slate-600 hover:bg-slate-700 hover:text-slate-950"
                       title="View profile"
                     >
                       <User className="w-4 h-4" />
@@ -331,7 +331,7 @@ export function JobApplicants() {
                       <button
                         onClick={() => sendAssessmentMu.mutate(app.id)}
                         disabled={sendAssessmentMu.isPending}
-                        className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-brand-400 disabled:opacity-30"
+                        className="p-2 rounded-lg text-slate-600 hover:bg-slate-700 hover:text-brand-400 disabled:opacity-30"
                         title="Send Aptitude Test"
                       >
                         <FileCheck className="w-4 h-4" />
@@ -342,7 +342,7 @@ export function JobApplicants() {
                       <button
                         onClick={() => sendCodingMu.mutate(app.id)}
                         disabled={sendCodingMu.isPending}
-                        className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-purple-400 disabled:opacity-30"
+                        className="p-2 rounded-lg text-slate-600 hover:bg-slate-700 hover:text-purple-400 disabled:opacity-30"
                         title="Send Coding Assessment"
                       >
                         <Code className="w-4 h-4" />
@@ -378,7 +378,7 @@ export function JobApplicants() {
                           <button
                             onClick={() => acceptMu.mutate(app.id)}
                             disabled={acceptMu.isPending || rejectMu.isPending}
-                            className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-emerald-400 disabled:opacity-50"
+                            className="p-2 rounded-lg text-slate-600 hover:bg-slate-700 hover:text-emerald-400 disabled:opacity-50"
                             title={
                               app.status === 'screening' || app.status === 'screening_submitted'
                                 ? 'Pass Screening'
@@ -400,7 +400,7 @@ export function JobApplicants() {
                           <button
                             onClick={() => rejectMu.mutate(app.id)}
                             disabled={acceptMu.isPending || rejectMu.isPending}
-                            className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-red-400 disabled:opacity-50"
+                            className="p-2 rounded-lg text-slate-600 hover:bg-slate-700 hover:text-red-400 disabled:opacity-50"
                             title="Reject"
                           >
                             <X className="w-4 h-4" />
@@ -414,7 +414,7 @@ export function JobApplicants() {
           </tbody>
         </table>
         {sorted.length === 0 && (
-          <div className="py-12 text-center text-slate-400">
+          <div className="py-12 text-center text-slate-600">
             No applicants yet. Share the job link to start receiving applications.
           </div>
         )}

@@ -41,5 +41,5 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
 })
 
 app.listen(port, () => {
-  console.log(`HireFlow API http://localhost:${port}`)
+  console.log(`HireEngine API http://localhost:${port}`)
 })

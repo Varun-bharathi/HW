@@ -39,7 +39,7 @@ export function JobDetail() {
   if (!id) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">Invalid job.</p>
+        <p className="text-slate-600">Invalid job.</p>
         <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
           Back to jobs
         </Link>
@@ -49,7 +49,7 @@ export function JobDetail() {
 
   if (isLoading || !job) {
     return (
-      <div className="max-w-3xl mx-auto py-12 text-center text-slate-400">
+      <div className="max-w-3xl mx-auto py-12 text-center text-slate-600">
         {isLoading ? 'Loading…' : 'Job not found.'}
         <Link to="/seeker/jobs" className="mt-2 block text-emerald-400 hover:underline">
           Back to jobs
@@ -65,13 +65,13 @@ export function JobDetail() {
       <div className="flex items-center gap-4">
         <Link
           to="/seeker/jobs"
-          className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-950 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-white">{job.title}</h1>
-          <p className="mt-1 text-slate-400 flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-slate-950">{job.title}</h1>
+          <p className="mt-1 text-slate-600 flex items-center gap-3">
             <span className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
               {job.location ?? 'Remote'}
@@ -84,16 +84,16 @@ export function JobDetail() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-        <h2 className="text-lg font-semibold text-white mb-3">Description</h2>
-        <p className="text-slate-300 whitespace-pre-wrap">{job.description}</p>
+      <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-6">
+        <h2 className="text-lg font-semibold text-slate-950 mb-3">Description</h2>
+        <p className="text-slate-700 whitespace-pre-wrap">{job.description}</p>
         <div className="mt-4">
-          <h3 className="text-sm font-semibold text-slate-300 mb-2">Required skills</h3>
+          <h3 className="text-sm font-semibold text-slate-700 mb-2">Required skills</h3>
           <div className="flex flex-wrap gap-2">
             {skills.map((s) => (
               <span
                 key={s}
-                className="px-2.5 py-1 rounded-lg bg-slate-700/50 text-slate-300 text-sm"
+                className="px-2.5 py-1 rounded-lg bg-slate-700/50 text-slate-700 text-sm"
               >
                 {s}
               </span>
@@ -110,7 +110,7 @@ export function JobDetail() {
       <div className="flex gap-3">
         {hasApplied ? (
           <div className="flex flex-col gap-2">
-            <span className="inline-flex items-center px-4 py-2.5 rounded-lg bg-slate-700 text-slate-400">
+            <span className="inline-flex items-center px-4 py-2.5 rounded-lg bg-slate-700 text-slate-600">
               Application submitted
             </span>
             <button
@@ -118,7 +118,7 @@ export function JobDetail() {
                 const app = myApps.find((a) => a.job_id === id)
                 if (app) navigate(`/assessment/screening/${app.id}`)
               }}
-              className="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-colors"
+              className="px-6 py-3 rounded-lg bg-emerald-500 text-slate-950 font-medium hover:bg-emerald-600 transition-colors"
             >
               Start Screening Test
             </button>
@@ -127,14 +127,14 @@ export function JobDetail() {
           <button
             onClick={handleApply}
             disabled={applying}
-            className="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
+            className="px-6 py-3 rounded-lg bg-emerald-500 text-slate-950 font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
           >
             {applying ? 'Starting Test…' : 'Screening Test'}
           </button>
         )}
         <Link
           to="/seeker/jobs"
-          className="px-6 py-3 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-colors"
+          className="px-6 py-3 rounded-lg bg-slate-100 text-slate-700 font-medium hover:bg-slate-700 transition-colors"
         >
           Back to jobs
         </Link>

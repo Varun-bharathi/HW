@@ -7,22 +7,8 @@ import {
   Send,
   Trash2,
 } from 'lucide-react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from 'recharts'
 import { jobsApi } from '@/api/jobs'
 
-const funnelData = [
-  { stage: 'Applied', count: 6, fill: '#0ea5e9' },
-  { stage: 'Screened', count: 4, fill: '#38bdf8' },
-  { stage: 'Interview', count: 1, fill: '#bae6fd' },
-]
 
 export function RecruiterDashboard() {
   const qc = useQueryClient()
@@ -49,29 +35,29 @@ export function RecruiterDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="mt-1 text-slate-400">
+        <h1 className="text-2xl font-bold text-slate-950">Dashboard</h1>
+        <p className="mt-1 text-slate-600">
           Job posting stats, applicant funnel, and score trends
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-400">Live jobs</p>
-              <p className="mt-1 text-2xl font-bold text-white">{liveJobs.length}</p>
+              <p className="text-sm font-medium text-slate-600">Live jobs</p>
+              <p className="mt-1 text-2xl font-bold text-slate-950">{liveJobs.length}</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
               <Briefcase className="w-6 h-6 text-brand-400" />
             </div>
           </div>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-400">Total applicants</p>
-              <p className="mt-1 text-2xl font-bold text-white">{totalApplicants}</p>
+              <p className="text-sm font-medium text-slate-600">Total applicants</p>
+              <p className="mt-1 text-2xl font-bold text-slate-950">{totalApplicants}</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
               <Users className="w-6 h-6 text-emerald-400" />
@@ -80,69 +66,11 @@ export function RecruiterDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-          <h2 className="text-lg font-semibold text-white">Applicant funnel</h2>
-          <div className="mt-4 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={funnelData} layout="vertical" margin={{ left: 70 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis type="number" stroke="#94a3b8" fontSize={12} />
-                <YAxis
-                  type="category"
-                  dataKey="stage"
-                  stroke="#94a3b8"
-                  fontSize={12}
-                  width={70}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    border: '1px solid #334155',
-                    borderRadius: '8px',
-                  }}
-                  labelStyle={{ color: '#f1f5f9' }}
-                />
-                <Bar dataKey="count" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-          <h2 className="text-lg font-semibold text-white">Score trend (last 7 days)</h2>
-          <div className="mt-4 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={[
-                  { day: 'Mon', avg: 76 },
-                  { day: 'Tue', avg: 81 },
-                  { day: 'Wed', avg: 79 },
-                  { day: 'Thu', avg: 85 },
-                  { day: 'Fri', avg: 82 },
-                  { day: 'Sat', avg: 84 },
-                  { day: 'Sun', avg: 86 },
-                ]}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="day" stroke="#94a3b8" fontSize={12} />
-                <YAxis stroke="#94a3b8" fontSize={12} domain={[60, 100]} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    border: '1px solid #334155',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Bar dataKey="avg" fill="#0ea5e9" radius={[4, 4, 0, 0]} name="Avg %" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
 
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Recent jobs</h2>
+
+      <div className="rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-950">Recent jobs</h2>
           <Link
             to="/recruiter/jobs/new"
             className="text-sm font-medium text-brand-400 hover:text-brand-300 flex items-center gap-1"
@@ -151,21 +79,19 @@ export function RecruiterDashboard() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        <p className="px-4 py-2 text-sm text-slate-500 border-b border-slate-800">
-          Draft jobs are not visible to job seekers. Click <strong>Publish</strong> to go live.
-        </p>
+
         <div className="divide-y divide-slate-800">
           {isLoading ? (
-            <div className="p-8 text-center text-slate-400">Loading…</div>
+            <div className="p-8 text-center text-slate-600">Loading…</div>
           ) : (
             jobs.map((job) => (
               <div
                 key={job.id}
-                className="p-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
+                className="p-4 flex items-center justify-between hover:bg-slate-100/30 transition-colors"
               >
                 <div>
-                  <p className="font-medium text-white">{job.title}</p>
-                  <p className="text-sm text-slate-400">
+                  <p className="font-medium text-slate-950">{job.title}</p>
+                  <p className="text-sm text-slate-600">
                     {job.location} · {job.employment_type}
                   </p>
                 </div>
@@ -173,7 +99,7 @@ export function RecruiterDashboard() {
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-medium ${job.status === 'live'
                       ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-slate-600/50 text-slate-400'
+                      : 'bg-slate-600/50 text-slate-600'
                       }`}
                   >
                     {job.status}
@@ -183,7 +109,7 @@ export function RecruiterDashboard() {
                       type="button"
                       onClick={() => publishMu.mutate(job.id)}
                       disabled={publishMu.isPending && publishMu.variables === job.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-slate-950 text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
                       {publishMu.isPending && publishMu.variables === job.id ? 'Publishing…' : 'Publish'}
@@ -191,7 +117,7 @@ export function RecruiterDashboard() {
                   )}
                   <Link
                     to={`/recruiter/jobs/${job.id}/edit`}
-                    className="text-sm font-medium text-slate-400 hover:text-white"
+                    className="text-sm font-medium text-slate-600 hover:text-slate-950"
                   >
                     Edit
                   </Link>

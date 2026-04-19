@@ -24,14 +24,14 @@ export function CodeEditor({
   )
 
   return (
-    <div className="assessment-container rounded-lg overflow-hidden border border-slate-700 h-full flex flex-col">
-      <div className="bg-slate-800 p-2 flex items-center justify-between border-b border-slate-700">
-        <span className="text-xs text-slate-400 font-medium ml-2">Code Editor</span>
+    <div className="assessment-container rounded-lg overflow-hidden border border-slate-300 h-full flex flex-col">
+      <div className="bg-slate-100 p-2 flex items-center justify-between border-b border-slate-300">
+        <span className="text-xs text-slate-600 font-medium ml-2">Code Editor</span>
         {!readOnly && (
           <select
             value={language}
             onChange={(e) => onLanguageChange?.(e.target.value)}
-            className="bg-slate-900 text-slate-300 text-xs rounded border border-slate-700 px-2 py-1 outline-none focus:border-brand-500"
+            className="bg-slate-50 text-slate-700 text-xs rounded border border-slate-300 px-2 py-1 outline-none focus:border-brand-500"
           >
             <option value="python">Python</option>
             <option value="java">Java</option>

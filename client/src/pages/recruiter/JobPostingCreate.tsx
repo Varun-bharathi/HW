@@ -73,13 +73,13 @@ export function JobPostingCreate() {
       <div className="flex items-center gap-4">
         <Link
           to="/recruiter/dashboard"
-          className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-950 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Create job posting</h1>
-          <p className="mt-1 text-slate-400">
+          <h1 className="text-2xl font-bold text-slate-950">Create job posting</h1>
+          <p className="mt-1 text-slate-600">
             Job title, required skills, experience level, location, employment type
           </p>
         </div>
@@ -87,21 +87,21 @@ export function JobPostingCreate() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
             Job title *
           </label>
           <input
             type="text"
             value={form.title}
             onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
             placeholder="e.g. Senior Frontend Engineer"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Job description *
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
@@ -113,7 +113,7 @@ export function JobPostingCreate() {
                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   jdSource === src
                     ? 'bg-brand-500/20 text-brand-300 border border-brand-500/50'
-                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-transparent'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-700 border border-transparent'
                 }`}
               >
                 {src === 'manual' && <FileText className="w-4 h-4" />}
@@ -136,35 +136,35 @@ export function JobPostingCreate() {
             </button>
           )}
           {jdSource === 'file' && (
-            <p className="mb-2 text-sm text-slate-400">
+            <p className="mb-2 text-sm text-slate-600">
               Upload a PDF or DOC file to extract job description (coming soon).
             </p>
           )}
           <textarea
             value={form.description}
             onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[180px]"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[180px]"
             placeholder="Describe the role, responsibilities, and requirements..."
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
             Required skills (comma- or semicolon-separated) *
           </label>
           <input
             type="text"
             value={form.skills}
             onChange={(e) => setForm((p) => ({ ...p, skills: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
             placeholder="e.g. React, TypeScript, Node.js"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-1">
               Experience level
             </label>
             <select
@@ -172,7 +172,7 @@ export function JobPostingCreate() {
               onChange={(e) =>
                 setForm((p) => ({ ...p, experience_level: e.target.value }))
               }
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               {experienceLevels.map((l) => (
                 <option key={l} value={l}>
@@ -182,7 +182,7 @@ export function JobPostingCreate() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-1">
               Employment type
             </label>
             <select
@@ -190,7 +190,7 @@ export function JobPostingCreate() {
               onChange={(e) =>
                 setForm((p) => ({ ...p, employment_type: e.target.value }))
               }
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               {employmentTypes.map((t) => (
                 <option key={t} value={t}>
@@ -202,20 +202,20 @@ export function JobPostingCreate() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
             Location
           </label>
           <input
             type="text"
             value={form.location}
             onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
             placeholder="e.g. Remote, New York NY"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
             Preliminary screening cutoff score (0–100)
           </label>
           <input
@@ -229,9 +229,9 @@ export function JobPostingCreate() {
                 cutoff_score: Math.min(100, Math.max(0, +e.target.value)),
               }))
             }
-            className="w-full max-w-[120px] px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full max-w-[120px] px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-slate-600">
             Min. 10 questions (MCQ + coding). Configure in next step after saving.
           </p>
         </div>
@@ -243,9 +243,9 @@ export function JobPostingCreate() {
             onChange={(e) =>
               setForm((p) => ({ ...p, publish_immediately: e.target.checked }))
             }
-            className="rounded border-slate-600 bg-slate-900 text-brand-500 focus:ring-brand-500"
+            className="rounded border-slate-600 bg-slate-50 text-brand-500 focus:ring-brand-500"
           />
-          <span className="text-sm text-slate-300">
+          <span className="text-sm text-slate-700">
             Publish immediately — visible to job seekers right away
           </span>
         </label>
@@ -254,7 +254,7 @@ export function JobPostingCreate() {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 rounded-lg bg-brand-500 text-white font-medium hover:bg-brand-600 disabled:opacity-50 transition-colors"
+            className="px-6 py-3 rounded-lg bg-brand-500 text-slate-950 font-medium hover:bg-brand-600 disabled:opacity-50 transition-colors"
           >
             {loading
               ? 'Saving…'
@@ -264,7 +264,7 @@ export function JobPostingCreate() {
           </button>
           <Link
             to="/recruiter/dashboard"
-            className="px-6 py-3 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-colors"
+            className="px-6 py-3 rounded-lg bg-slate-100 text-slate-700 font-medium hover:bg-slate-700 transition-colors"
           >
             Cancel
           </Link>

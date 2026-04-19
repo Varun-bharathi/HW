@@ -59,8 +59,8 @@ export function MyApplications() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">My applications</h1>
-        <p className="mt-1 text-slate-400">Track progress and interview invitations</p>
+        <h1 className="text-2xl font-bold text-slate-950">My applications</h1>
+        <p className="mt-1 text-slate-600">Track progress and interview invitations</p>
       </div>
 
       <input
@@ -70,12 +70,12 @@ export function MyApplications() {
         className="hidden"
         onChange={handleFileChange}
       />
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+      <div className="rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
         <div className="divide-y divide-slate-800">
           {isLoading ? (
-            <div className="py-12 text-center text-slate-400">Loading…</div>
+            <div className="py-12 text-center text-slate-600">Loading…</div>
           ) : applications.length === 0 ? (
-            <div className="py-12 text-center text-slate-400">
+            <div className="py-12 text-center text-slate-600">
               <FileCheck className="w-12 h-12 mx-auto mb-3 text-slate-600" />
               <p>No applications yet.</p>
               <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
@@ -86,11 +86,11 @@ export function MyApplications() {
             applications.map((app) => (
               <div
                 key={app.id}
-                className="p-4 flex items-center justify-between hover:bg-slate-800/30"
+                className="p-4 flex items-center justify-between hover:bg-slate-100/30"
               >
                 <div className="flex-1">
-                  <p className="font-medium text-white">{app.job?.title ?? 'Job'}</p>
-                  <p className="text-sm text-slate-400">
+                  <p className="font-medium text-slate-950">{app.job?.title ?? 'Job'}</p>
+                  <p className="text-sm text-slate-600">
                     {app.job?.location ?? '—'} · {app.job?.employment_type ?? '—'}
                   </p>
                   {app.resume_jd_match != null && (
@@ -152,7 +152,7 @@ export function MyApplications() {
                         ? 'bg-red-500/20 text-red-400'
                         : app.status === 'shortlisted'
                           ? 'bg-amber-500/20 text-amber-400'
-                          : 'bg-slate-600/50 text-slate-400'
+                          : 'bg-slate-600/50 text-slate-600'
                       }`}
                   >
                     {statusLabels[app.status]}
@@ -160,7 +160,7 @@ export function MyApplications() {
                   {app.job && (
                     <Link
                       to={`/seeker/jobs/${app.job.id}`}
-                      className="p-2 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-white"
+                      className="p-2 rounded-lg text-slate-600 hover:bg-slate-700 hover:text-slate-950"
                       title="View job"
                     >
                       <ExternalLink className="w-4 h-4" />

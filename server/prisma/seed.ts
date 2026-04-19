@@ -5,9 +5,9 @@ import bcrypt from 'bcryptjs'
 async function main() {
   const hash = await bcrypt.hash('password123', 10)
   const recruiter = await prisma.user.upsert({
-    where: { email: 'recruiter@hireflow.demo' },
+    where: { email: 'recruiter@HireEngine.demo' },
     create: {
-      email: 'recruiter@hireflow.demo',
+      email: 'recruiter@HireEngine.demo',
       passwordHash: hash,
       role: 'recruiter',
     },
@@ -15,14 +15,14 @@ async function main() {
   })
   await prisma.recruiterProfile.upsert({
     where: { userId: recruiter.id },
-    create: { userId: recruiter.id, fullName: 'Demo Recruiter', company: 'HireFlow Demo' },
+    create: { userId: recruiter.id, fullName: 'Demo Recruiter', company: 'HireEngine Demo' },
     update: {},
   })
 
   const seeker = await prisma.user.upsert({
-    where: { email: 'seeker@hireflow.demo' },
+    where: { email: 'seeker@HireEngine.demo' },
     create: {
-      email: 'seeker@hireflow.demo',
+      email: 'seeker@HireEngine.demo',
       passwordHash: hash,
       role: 'job_seeker',
     },
@@ -88,7 +88,7 @@ async function main() {
       },
     })
   }
-  console.log('Seed done. recruiter@hireflow.demo / seeker@hireflow.demo — password: password123')
+  console.log('Seed done. recruiter@HireEngine.demo / seeker@HireEngine.demo — password: password123')
 }
 
 main()

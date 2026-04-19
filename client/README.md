@@ -1,4 +1,4 @@
-# HireFlow — React Client
+# HireEngine — React Client
 
 AI-powered hiring platform frontend: Recruiter and Job Seeker dashboards, job posting, applicant ranking, screening tests, and more.
 

@@ -65,7 +65,7 @@ export function JobSeekerProfile() {
   if (loading) {
     return (
       <div className="max-w-2xl">
-        <p className="text-slate-400">Loading profile…</p>
+        <p className="text-slate-600">Loading profile…</p>
       </div>
     )
   }
@@ -73,8 +73,8 @@ export function JobSeekerProfile() {
   return (
     <div className="max-w-2xl space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Profile</h1>
-        <p className="mt-1 text-slate-400">
+        <h1 className="text-2xl font-bold text-slate-950">Profile</h1>
+        <p className="mt-1 text-slate-600">
           Resume upload, skills, experience, location, portfolio links
         </p>
       </div>
@@ -84,22 +84,22 @@ export function JobSeekerProfile() {
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 space-y-4">
+        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-6 space-y-4">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center">
               <User className="w-8 h-8 text-emerald-400" />
             </div>
             <div>
-              <p className="font-medium text-white">Job Seeker</p>
-              <p className="text-sm text-slate-400">{form.email}</p>
+              <p className="font-medium text-slate-950">Job Seeker</p>
+              <p className="text-sm text-slate-600">{form.email}</p>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Resume</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Resume</label>
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-700"
               >
                 <Upload className="w-4 h-4" />
                 Upload PDF/DOC
@@ -108,51 +108,51 @@ export function JobSeekerProfile() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Full name</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Full name</label>
             <input
               type="text"
               value={form.full_name}
               onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Skills (comma-separated)</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Skills (comma-separated)</label>
             <input
               type="text"
               value={form.skills}
               onChange={(e) => setForm((p) => ({ ...p, skills: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="React, TypeScript, ..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Experience</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Experience</label>
             <textarea
               value={form.experience}
               onChange={(e) => setForm((p) => ({ ...p, experience: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[80px]"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[80px]"
               placeholder="Role @ Company (years)..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Location</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
             <input
               type="text"
               value={form.location}
               onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-1">
               Portfolio links (comma-separated)
             </label>
             <input
               type="text"
               value={form.portfolio_urls}
               onChange={(e) => setForm((p) => ({ ...p, portfolio_urls: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="https://..."
             />
           </div>
@@ -160,7 +160,7 @@ export function JobSeekerProfile() {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-slate-950 font-medium hover:bg-emerald-600 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
           {saving ? 'Saving…' : 'Save'}

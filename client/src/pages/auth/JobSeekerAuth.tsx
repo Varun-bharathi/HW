@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { login, registerJobSeeker } from '@/api/auth'
 
 const formClass =
-  'w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent'
+  'w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent'
 
 export function JobSeekerLogin() {
   const [email, setEmail] = useState('')
@@ -32,15 +32,15 @@ export function JobSeekerLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-8">
-          <span className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-sm font-mono">H</span>
-          HireFlow
+        <Link to="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-950 mb-8">
+          <span className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 text-sm font-mono">H</span>
+          HireEngine
         </Link>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8">
-          <h1 className="text-2xl font-bold text-white">Job seeker login</h1>
-          <p className="mt-1 text-slate-400">Sign in to find jobs and track applications</p>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8">
+          <h1 className="text-2xl font-bold text-slate-950">Job seeker login</h1>
+          <p className="mt-1 text-slate-600">Sign in to find jobs and track applications</p>
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {error && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
@@ -48,7 +48,7 @@ export function JobSeekerLogin() {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
               <input
                 type="email"
                 value={email}
@@ -59,7 +59,7 @@ export function JobSeekerLogin() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
               <input
                 type="password"
                 value={password}
@@ -72,12 +72,12 @@ export function JobSeekerLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
+              className="w-full py-3 rounded-lg bg-emerald-500 text-slate-950 font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
-          <p className="mt-6 text-center text-slate-400 text-sm">
+          <p className="mt-6 text-center text-slate-600 text-sm">
             New?{' '}
             <Link to="/auth/job-seeker/register" className="text-emerald-400 hover:underline">
               Create job seeker account
@@ -114,15 +114,15 @@ export function JobSeekerRegister() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-8">
-          <span className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-sm font-mono">H</span>
-          HireFlow
+        <Link to="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-950 mb-8">
+          <span className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 text-sm font-mono">H</span>
+          HireEngine
         </Link>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8">
-          <h1 className="text-2xl font-bold text-white">Job seeker sign up</h1>
-          <p className="mt-1 text-slate-400">Create an account to apply and track applications</p>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8">
+          <h1 className="text-2xl font-bold text-slate-950">Job seeker sign up</h1>
+          <p className="mt-1 text-slate-600">Create an account to apply and track applications</p>
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {error && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
@@ -130,7 +130,7 @@ export function JobSeekerRegister() {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Full name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Full name</label>
               <input
                 type="text"
                 value={fullName}
@@ -141,7 +141,7 @@ export function JobSeekerRegister() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
               <input
                 type="email"
                 value={email}
@@ -152,7 +152,7 @@ export function JobSeekerRegister() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
               <input
                 type="password"
                 value={password}
@@ -166,12 +166,12 @@ export function JobSeekerRegister() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
+              className="w-full py-3 rounded-lg bg-emerald-500 text-slate-950 font-medium hover:bg-emerald-600 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
-          <p className="mt-6 text-center text-slate-400 text-sm">
+          <p className="mt-6 text-center text-slate-600 text-sm">
             Already have an account?{' '}
             <Link to="/auth/job-seeker/login" className="text-emerald-400 hover:underline">
               Sign in

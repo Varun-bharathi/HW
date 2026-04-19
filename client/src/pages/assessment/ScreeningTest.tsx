@@ -28,7 +28,7 @@ function McqOptions({
           key={opt.id}
           className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${selected === opt.id
             ? 'border-brand-500 bg-brand-500/10'
-            : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            : 'border-slate-300 hover:border-slate-600 bg-slate-100/50'
             }`}
         >
           <input
@@ -131,9 +131,9 @@ export function ScreeningTest() {
 
   if (!applicationId) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-400">Invalid assessment.</p>
+          <p className="text-slate-600">Invalid assessment.</p>
           <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
             Back to jobs
           </Link>
@@ -144,17 +144,17 @@ export function ScreeningTest() {
 
   if (isLoading || (!config && !error)) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center text-slate-400">Loading screening…</div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center text-slate-600">Loading screening…</div>
       </div>
     )
   }
 
   if (error || !config) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-400">Could not load assessment. Please log in and try again.</p>
+          <p className="text-slate-600">Could not load assessment. Please log in and try again.</p>
           <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
             Back to jobs
           </Link>
@@ -165,9 +165,9 @@ export function ScreeningTest() {
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-400">No questions configured.</p>
+          <p className="text-slate-600">No questions configured.</p>
           <Link to="/seeker/jobs" className="mt-2 inline-block text-emerald-400 hover:underline">
             Back to jobs
           </Link>
@@ -178,18 +178,18 @@ export function ScreeningTest() {
 
   if (submitted && !submitError && !submitResult) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center text-slate-400">Submitting…</div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center text-slate-600">Submitting…</div>
       </div>
     )
   }
 
   if (submitted && submitResult) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
-          <h2 className="text-xl font-bold text-white">Test submitted</h2>
-          <p className="mt-2 text-slate-400">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center max-w-md">
+          <h2 className="text-xl font-bold text-slate-950">Test submitted</h2>
+          <p className="mt-2 text-slate-600">
             {submitResult.passed ? 'You passed! You can now upload your resume to complete your application.' : 'Below cutoff. Better luck next time.'}
           </p>
           <p className="mt-4 text-sm text-slate-500">Redirecting to dashboard…</p>
@@ -200,13 +200,13 @@ export function ScreeningTest() {
 
   if (submitted && submitError) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center max-w-md">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center max-w-md">
           <p className="text-red-400">{submitError}</p>
           <button
             type="button"
             onClick={() => { setSubmitted(false); setSubmitError(''); }}
-            className="mt-4 px-4 py-2 rounded-lg bg-slate-700 text-white"
+            className="mt-4 px-4 py-2 rounded-lg bg-slate-700 text-slate-950"
           >
             Try again
           </button>
@@ -216,14 +216,14 @@ export function ScreeningTest() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <header className="border-b border-slate-800 bg-slate-900/50 sticky top-0 z-10">
+    <div className="min-h-screen bg-white">
+      <header className="border-b border-slate-200 bg-slate-50/50 sticky top-0 z-10">
         <div className="max-w-[95vw] mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/seeker/jobs" className="text-sm text-slate-400 hover:text-white">
+            <Link to="/seeker/jobs" className="text-sm text-slate-600 hover:text-slate-950">
               ← Exit
             </Link>
-            <h1 className="font-semibold text-white">Preliminary screening</h1>
+            <h1 className="font-semibold text-slate-950">Preliminary screening</h1>
           </div>
           <div className="flex items-center gap-3">
             <CountdownTimer
@@ -234,7 +234,7 @@ export function ScreeningTest() {
             <button
               type="button"
               onClick={() => setPaused((p) => !p)}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-sm hover:bg-slate-700"
+              className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm hover:bg-slate-700"
             >
               {paused ? 'Resume' : 'Pause'}
             </button>
@@ -254,10 +254,10 @@ export function ScreeningTest() {
                 type="button"
                 onClick={() => setCurrentIndex(i)}
                 className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${i === currentIndex
-                  ? 'bg-brand-500 text-white'
+                  ? 'bg-brand-500 text-slate-950'
                   : answers[q.id]
                     ? 'bg-emerald-500/20 text-emerald-400'
-                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-700'
                   }`}
               >
                 {i + 1}
@@ -270,8 +270,8 @@ export function ScreeningTest() {
           {current && (
             <>
               {current.type === 'mcq' ? (
-                <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
-                  <div className="p-5 border-b border-slate-800">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
+                  <div className="p-5 border-b border-slate-200">
                     <span className="text-xs font-medium text-slate-500">
                       Question {currentIndex + 1} of {questions.length} · MCQ
                     </span>
@@ -288,24 +288,24 @@ export function ScreeningTest() {
               ) : (
                 <div className="flex gap-4 h-[calc(100vh-140px)]">
                   {/* Left Panel: Description */}
-                  <div className="flex-1 min-w-0 rounded-xl border border-slate-800 bg-slate-900/50 flex flex-col overflow-hidden">
-                    <div className="p-3 border-b border-slate-800 bg-slate-900/80 flex items-center gap-2">
+                  <div className="flex-1 min-w-0 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col overflow-hidden">
+                    <div className="p-3 border-b border-slate-200 bg-slate-50/80 flex items-center gap-2">
                       <span className="text-xs font-bold text-brand-400 bg-brand-400/10 px-2 py-0.5 rounded">Easy</span>
                       <span className="text-sm font-medium text-slate-200">Question {currentIndex + 1}</span>
                     </div>
-                    <div className="p-4 overflow-y-auto flex-1 text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
-                      <h2 className="text-lg font-bold text-white mb-4">{current.content.split(':')[0]}</h2>
+                    <div className="p-4 overflow-y-auto flex-1 text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">
+                      <h2 className="text-lg font-bold text-slate-950 mb-4">{current.content.split(':')[0]}</h2>
                       {current.content.split(':').slice(1).join(':').trim()}
 
                       {current.examples && current.examples.length > 0 && (
                         <div className="mt-6 space-y-4">
                           {current.examples.map((ex, i) => (
-                            <div key={i} className="bg-slate-950/50 p-3 rounded-lg border border-slate-800 font-mono text-xs">
+                            <div key={i} className="bg-white/50 p-3 rounded-lg border border-slate-200 font-mono text-xs">
                               <div className="text-slate-500 mb-1">Example {i + 1}:</div>
-                              <div className="mb-1"><span className="text-slate-400">Input:</span> {ex.input}</div>
-                              <div className="mb-1"><span className="text-slate-400">Output:</span> {ex.output}</div>
+                              <div className="mb-1"><span className="text-slate-600">Input:</span> {ex.input}</div>
+                              <div className="mb-1"><span className="text-slate-600">Output:</span> {ex.output}</div>
                               {ex.explanation && (
-                                <div><span className="text-slate-400">Explanation:</span> {ex.explanation}</div>
+                                <div><span className="text-slate-600">Explanation:</span> {ex.explanation}</div>
                               )}
                             </div>
                           ))}
@@ -330,17 +330,17 @@ export function ScreeningTest() {
                     </div>
 
                     {/* Bottom: Console */}
-                    <div className="h-64 shrink-0 rounded-xl border border-slate-800 bg-slate-900/50 flex flex-col overflow-hidden">
+                    <div className="h-64 shrink-0 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col overflow-hidden">
                       {/* Console Header */}
-                      <div className="flex items-center justify-between p-2 border-b border-slate-800 bg-slate-900/80">
+                      <div className="flex items-center justify-between p-2 border-b border-slate-200 bg-slate-50/80">
                         <div className="flex gap-1">
-                          <button className="px-3 py-1 text-xs font-medium text-slate-200 bg-slate-800 rounded-t border-b-2 border-transparent">Test Result</button>
+                          <button className="px-3 py-1 text-xs font-medium text-slate-200 bg-slate-100 rounded-t border-b-2 border-transparent">Test Result</button>
                         </div>
                         <button
                           type="button"
                           onClick={handleRunCode}
                           disabled={isRunning || !answers[current.id]}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-brand-600 hover:bg-brand-500 text-white text-xs font-medium disabled:opacity-50"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-brand-600 hover:bg-brand-500 text-slate-950 text-xs font-medium disabled:opacity-50"
                         >
                           {isRunning ? (
                             <>
@@ -365,14 +365,14 @@ export function ScreeningTest() {
                             return (
                               <div className="flex-1 flex min-w-0">
                                 {/* Case Tabs (Left strip) */}
-                                <div className="w-24 border-r border-slate-800 bg-slate-900/30 flex flex-col overflow-y-auto">
+                                <div className="w-24 border-r border-slate-200 bg-slate-50/30 flex flex-col overflow-y-auto">
                                   {results.map((r, i) => (
                                     <button
                                       key={i}
                                       onClick={() => setActiveCaseIndex(i)}
                                       className={`px-3 py-2 text-left text-xs transition-colors border-l-2 ${activeCaseIndex === i
-                                        ? 'bg-slate-800 border-white text-white'
-                                        : 'border-transparent text-slate-500 hover:text-slate-300'
+                                        ? 'bg-slate-100 border-white text-slate-950'
+                                        : 'border-transparent text-slate-500 hover:text-slate-700'
                                         }`}
                                     >
                                       Case {i + 1}
@@ -382,7 +382,7 @@ export function ScreeningTest() {
                                 </div>
 
                                 {/* Active Case Detail */}
-                                <div className="flex-1 p-4 overflow-y-auto font-mono text-xs text-slate-300">
+                                <div className="flex-1 p-4 overflow-y-auto font-mono text-xs text-slate-700">
                                   {(() => {
                                     const r = results[activeCaseIndex]
                                     if (!r) return <div className="text-slate-500">Select a case</div>
@@ -394,15 +394,15 @@ export function ScreeningTest() {
                                         </div>
                                         <div>
                                           <div className="text-slate-500 mb-1">Input</div>
-                                          <div className="bg-slate-950 p-2 rounded border border-slate-800">{r.input}</div>
+                                          <div className="bg-white p-2 rounded border border-slate-200">{r.input}</div>
                                         </div>
                                         <div>
                                           <div className="text-slate-500 mb-1">Output</div>
-                                          <div className="bg-slate-950 p-2 rounded border border-slate-800 whitespace-pre-wrap">{r.output}</div>
+                                          <div className="bg-white p-2 rounded border border-slate-200 whitespace-pre-wrap">{r.output}</div>
                                         </div>
                                         <div>
                                           <div className="text-slate-500 mb-1">Expected</div>
-                                          <div className="bg-slate-950 p-2 rounded border border-slate-800">{r.expected}</div>
+                                          <div className="bg-white p-2 rounded border border-slate-200">{r.expected}</div>
                                         </div>
                                       </div>
                                     )
@@ -431,7 +431,7 @@ export function ScreeningTest() {
               type="button"
               onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
               disabled={currentIndex === 0}
-              className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-700"
+              className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 disabled:opacity-40 hover:bg-slate-700"
             >
               Previous
             </button>
@@ -439,7 +439,7 @@ export function ScreeningTest() {
               <button
                 type="button"
                 onClick={() => setCurrentIndex((i) => i + 1)}
-                className="px-4 py-2 rounded-lg bg-brand-500 text-white hover:bg-brand-600"
+                className="px-4 py-2 rounded-lg bg-brand-500 text-slate-950 hover:bg-brand-600"
               >
                 Next
               </button>
@@ -447,7 +447,7 @@ export function ScreeningTest() {
               <button
                 type="button"
                 onClick={() => submitTest()}
-                className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
+                className="px-4 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-600"
               >
                 Submit test
               </button>
