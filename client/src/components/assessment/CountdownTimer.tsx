@@ -44,7 +44,7 @@ export function CountdownTimer({
   return (
     <div
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-lg font-semibold ${
-        danger ? 'bg-red-500/20 text-red-400' : 'bg-slate-100 text-slate-700'
+        danger ? 'bg-red-500/20 text-red-400' : 'bg-slate-800 text-slate-300'
       }`}
     >
       <span className="w-8 text-right">{m}</span>

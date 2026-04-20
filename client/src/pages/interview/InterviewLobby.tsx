@@ -55,14 +55,14 @@ export function InterviewLobby() {
 
   if (!applicationId) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-slate-600">Invalid application.</p>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-slate-400">Invalid application.</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       {/* Background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/5 rounded-full blur-3xl" />
@@ -70,17 +70,17 @@ export function InterviewLobby() {
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 backdrop-blur-sm p-8 text-center shadow-2xl">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur-sm p-8 text-center shadow-2xl">
           {error ? (
             <>
               <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-red-500/10 flex items-center justify-center">
                 <WifiOff className="w-8 h-8 text-red-400" />
               </div>
-              <h2 className="text-xl font-bold text-slate-950 mb-2">Session Unavailable</h2>
-              <p className="text-slate-600 mb-6">{error}</p>
+              <h2 className="text-xl font-bold text-slate-100 mb-2">Session Unavailable</h2>
+              <p className="text-slate-400 mb-6">{error}</p>
               <Link
                 to="/seeker/applications"
-                className="inline-flex items-center px-5 py-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-700 text-sm font-medium"
+                className="inline-flex items-center px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm font-medium"
               >
                 Back to Applications
               </Link>
@@ -96,13 +96,13 @@ export function InterviewLobby() {
                 </div>
               </div>
 
-              <h2 className="text-2xl font-bold text-slate-950 mb-2">You're in the Lobby</h2>
-              <p className="text-slate-600 mb-6 leading-relaxed">
+              <h2 className="text-2xl font-bold text-slate-100 mb-2">You're in the Lobby</h2>
+              <p className="text-slate-400 mb-6 leading-relaxed">
                 Please wait while the HR interviewer admits you into the interview room. Stay on this page.
               </p>
 
-              <div className="mb-6 p-4 rounded-xl bg-slate-100/60 border border-slate-300/50">
-                <p className="text-sm text-slate-700 font-medium flex items-center justify-center gap-2">
+              <div className="mb-6 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                <p className="text-sm text-slate-300 font-medium flex items-center justify-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   Waiting for HR to let you in{'.'.repeat(dots)}
                 </p>
@@ -126,10 +126,10 @@ export function InterviewLobby() {
                 </span>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-200">
+              <div className="mt-6 pt-5 border-t border-slate-800">
                 <Link
                   to="/seeker/applications"
-                  className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
+                  className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
                 >
                   Leave lobby & go back
                 </Link>

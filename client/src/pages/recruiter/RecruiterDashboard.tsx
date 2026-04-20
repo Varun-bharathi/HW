@@ -35,42 +35,38 @@ export function RecruiterDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-950">Dashboard</h1>
-        <p className="mt-1 text-slate-600">
+        <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
+        <p className="mt-1 text-slate-400">
           Job posting stats, applicant funnel, and score trends
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600">Live jobs</p>
-              <p className="mt-1 text-2xl font-bold text-slate-950">{liveJobs.length}</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
-              <Briefcase className="w-6 h-6 text-brand-400" />
-            </div>
+      <div className="flex flex-wrap gap-6">
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 w-56 h-56 flex flex-col items-center justify-center text-center gap-4 hover:border-slate-700 transition-colors">
+          <div className="w-16 h-16 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+            <Users className="w-8 h-8 text-emerald-400" />
+          </div>
+          <div>
+            <p className="text-4xl font-bold text-slate-100">{totalApplicants}</p>
+            <p className="mt-2 text-sm font-medium text-slate-400">Total applicants</p>
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600">Total applicants</p>
-              <p className="mt-1 text-2xl font-bold text-slate-950">{totalApplicants}</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-              <Users className="w-6 h-6 text-emerald-400" />
-            </div>
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 w-56 h-56 flex flex-col items-center justify-center text-center gap-4 hover:border-slate-700 transition-colors">
+          <div className="w-16 h-16 rounded-xl bg-brand-500/20 flex items-center justify-center">
+            <Briefcase className="w-8 h-8 text-brand-400" />
+          </div>
+          <div>
+            <p className="text-4xl font-bold text-slate-100">{liveJobs.length}</p>
+            <p className="mt-2 text-sm font-medium text-slate-400">Live jobs</p>
           </div>
         </div>
       </div>
 
 
 
-      <div className="rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-950">Recent jobs</h2>
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-slate-100">Recent jobs</h2>
           <Link
             to="/recruiter/jobs/new"
             className="text-sm font-medium text-brand-400 hover:text-brand-300 flex items-center gap-1"
@@ -80,36 +76,37 @@ export function RecruiterDashboard() {
           </Link>
         </div>
 
-        <div className="divide-y divide-slate-800">
+        <div className="flex flex-wrap gap-6">
           {isLoading ? (
-            <div className="p-8 text-center text-slate-600">Loading…</div>
+            <div className="p-8 text-center text-slate-400 w-full">Loading…</div>
           ) : (
             jobs.map((job) => (
               <div
                 key={job.id}
-                className="p-4 flex items-center justify-between hover:bg-slate-100/30 transition-colors"
+                className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 w-72 h-72 flex flex-col items-center justify-center text-center hover:border-slate-700 transition-colors"
               >
-                <div>
-                  <p className="font-medium text-slate-950">{job.title}</p>
-                  <p className="text-sm text-slate-600">
+                <div className="flex-1 flex flex-col items-center justify-center w-full">
+                  <h3 className="font-bold text-slate-100 text-xl mb-2 line-clamp-2">{job.title}</h3>
+                  <p className="text-sm text-slate-400 mb-4">
                     {job.location} · {job.employment_type}
                   </p>
-                </div>
-                <div className="flex items-center gap-3 flex-wrap">
                   <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${job.status === 'live'
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${job.status === 'live'
                       ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-slate-600/50 text-slate-600'
+                      : 'bg-slate-600/50 text-slate-400'
                       }`}
                   >
                     {job.status}
                   </span>
+                </div>
+                
+                <div className="w-full flex items-center justify-center gap-4 mt-4 flex-wrap border-t border-slate-800 pt-4">
                   {job.status === 'draft' && (
                     <button
                       type="button"
                       onClick={() => publishMu.mutate(job.id)}
                       disabled={publishMu.isPending && publishMu.variables === job.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-slate-950 text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 text-slate-100 text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
                       {publishMu.isPending && publishMu.variables === job.id ? 'Publishing…' : 'Publish'}
@@ -117,7 +114,7 @@ export function RecruiterDashboard() {
                   )}
                   <Link
                     to={`/recruiter/jobs/${job.id}/edit`}
-                    className="text-sm font-medium text-slate-600 hover:text-slate-950"
+                    className="text-sm font-medium text-slate-400 hover:text-slate-100"
                   >
                     Edit
                   </Link>
@@ -125,7 +122,7 @@ export function RecruiterDashboard() {
                     to={`/recruiter/jobs/${job.id}/applicants`}
                     className="text-sm font-medium text-brand-400 hover:text-brand-300"
                   >
-                    View applicants
+                    Applicants
                   </Link>
                   <button
                     type="button"
@@ -135,10 +132,9 @@ export function RecruiterDashboard() {
                       }
                     }}
                     disabled={deleteMu.isPending && deleteMu.variables === job.id}
-                    className="text-sm font-medium text-rose-400 hover:text-rose-300 flex items-center gap-1 disabled:opacity-50"
+                    className="text-sm font-medium text-rose-400 hover:text-rose-300 disabled:opacity-50"
                   >
                     <Trash2 className="w-4 h-4" />
-                    {deleteMu.isPending && deleteMu.variables === job.id ? 'Deleting…' : 'Delete'}
                   </button>
                 </div>
               </div>

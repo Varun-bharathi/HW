@@ -86,12 +86,11 @@ export function useProctoring(applicationId: string | undefined, onTerminate: ()
     }, [applicationId]);
 
     const ProctoringView = () => (
-        <div className= "fixed bottom-6 right-6 z-50 w-48 h-36 bg-slate-50 border-2 border-slate-300/50 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center" >
-        <video ref={ videoRef } autoPlay playsInline muted className = "w-full h-full object-cover bg-white" />
-            <canvas ref={ canvasRef } className = "hidden" />
-                {!streamRef.current && <span className="absolute text-xs text-slate-500" > Camera needed </span>
-}
-</div>
+        <div className="fixed bottom-6 left-6 z-50 w-48 h-36 bg-slate-900 border-2 border-slate-700/50 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover bg-black" />
+            <canvas ref={canvasRef} className="hidden" />
+            {!streamRef.current && <span className="absolute text-xs text-slate-500">Camera needed</span>}
+        </div>
     );
 
 return { ProctoringView, tabSwitches };

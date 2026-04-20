@@ -22,12 +22,12 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-auto rounded-2xl border border-slate-300 bg-slate-50 shadow-xl">
-        <div className="sticky top-0 flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
-          <h2 className="text-lg font-semibold text-slate-950">Candidate · {name}</h2>
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-auto rounded-2xl border border-slate-700 bg-slate-900 shadow-xl">
+        <div className="sticky top-0 flex items-center justify-between border-b border-slate-800 bg-slate-900 px-6 py-4">
+          <h2 className="text-lg font-semibold text-slate-100">Candidate · {name}</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+            className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -69,8 +69,8 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Parsed resume data</h3>
-            <div className="rounded-lg border border-slate-300 bg-slate-100/50 p-4 font-mono text-sm text-slate-700 space-y-1">
+            <h3 className="text-sm font-semibold text-slate-300 mb-2">Parsed resume data</h3>
+            <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-4 font-mono text-sm text-slate-300 space-y-1">
               {skills.length > 0 && <p>Skills: {skills.join(', ')}</p>}
               {experience && <p>Experience: {experience}</p>}
               {summary && <p>Summary: {summary}</p>}
@@ -83,15 +83,15 @@ export function CandidateDetailModal({ application, onClose }: CandidateDetailMo
           {gaps.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-amber-400 mb-2">Skill gaps vs JD</h3>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-400">
                 Missing or weaker: {gaps.join(', ')}
               </p>
             </div>
           )}
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Match breakdown</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className="text-sm font-semibold text-slate-300 mb-2">Match breakdown</h3>
+            <p className="text-sm text-slate-400">
               Resume–JD match is based on overlap between job required skills and parsed resume
               skills. Skill gaps list required skills not clearly present on the resume.
             </p>

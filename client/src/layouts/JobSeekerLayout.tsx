@@ -29,19 +29,19 @@ export function JobSeekerLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white">
-      <aside className="w-64 flex flex-col border-r border-slate-200 bg-slate-50/50">
-        <div className="p-6 border-b border-slate-200">
-          <Link to="/seeker/dashboard" className="flex items-center gap-2 font-semibold text-lg text-slate-950">
-            <span className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-slate-950 text-sm font-mono">H</span>
+    <div className="min-h-screen flex flex-row-reverse bg-black">
+      <aside className="w-64 flex flex-col border-l border-slate-800 bg-slate-900/50">
+        <div className="p-6 border-b border-slate-800">
+          <Link to="/seeker/dashboard" className="flex items-center gap-2 font-semibold text-lg text-slate-100">
+            <span className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-slate-100 text-sm font-mono">H</span>
             HireEngine
           </Link>
-          <p className="text-xs text-slate-600 mt-1">Job Seeker</p>
+          <p className="text-xs text-slate-400 mt-1">Job Seeker</p>
         </div>
-        <div className="p-3 border-b border-slate-200">
+        <div className="p-3 border-b border-slate-800">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-red-400 transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-red-400 transition-colors"
           >
             <LogOut className="w-5 h-5 shrink-0" />
             Log out
@@ -54,7 +54,7 @@ export function JobSeekerLayout() {
               <Link
                 key={to}
                 to={to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-brand-500/20 text-brand-300' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-200'
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-brand-500/20 text-brand-300' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
               >
                 <Icon className="w-5 h-5 shrink-0" />
